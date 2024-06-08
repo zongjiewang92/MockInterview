@@ -39,14 +39,14 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Resume createResume(Resume resume) {
-        int id = resumeMapper.insert(resume);
-        return resumeMapper.selectByPrimaryKey(id);
+        resumeMapper.insert(resume);
+        return resumeMapper.selectByPrimaryKey(resume.getId());
     }
 
     @Override
     public Resume updateResume(Resume resume) {
-        int id = resumeMapper.updateByPrimaryKey(resume);
-        return resumeMapper.selectByPrimaryKey(id);
+        resumeMapper.updateByPrimaryKey(resume);
+        return resumeMapper.selectByPrimaryKey(resume.getId());
     }
 
     @Override

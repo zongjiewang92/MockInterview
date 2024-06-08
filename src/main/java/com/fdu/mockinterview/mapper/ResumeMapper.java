@@ -26,13 +26,14 @@ public interface ResumeMapper {
      * @mbg.generated Sat Jun 08 12:45:10 PDT 2024
      */
     @Insert({
-        "insert into resume (id, user_id, ",
+        "insert into resume ( user_id, ",
         "cv_name, cv_type, ",
         "cv_directory, cv_context) ",
-        "values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, ",
+        "values ( #{userId,jdbcType=INTEGER}, ",
         "#{cvName,jdbcType=VARCHAR}, #{cvType,jdbcType=INTEGER}, ",
         "#{cvDirectory,jdbcType=VARCHAR}, #{cvContext,jdbcType=VARCHAR})",
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Resume record);
 
     /**
@@ -132,9 +133,7 @@ public interface ResumeMapper {
           "cv_name = #{cvName,jdbcType=VARCHAR},",
           "cv_type = #{cvType,jdbcType=INTEGER},",
           "cv_directory = #{cvDirectory,jdbcType=VARCHAR},",
-          "cv_context = #{cvContext,jdbcType=VARCHAR},",
-          "create_date = #{createDate,jdbcType=VARCHAR},",
-          "update_date = #{updateDate,jdbcType=VARCHAR}",
+          "cv_context = #{cvContext,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Resume record);
