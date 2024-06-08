@@ -5,8 +5,11 @@ import lombok.Data;
 @Data
 public class User {
     private Integer id;
-    private String user_name;
-    private String cv;
-    private String date;
+    private String userName;
+    private String passwd;
+    private String createDate;
     private String email;
+    private String firstName;
+    private String lastName;
+    private String updateDate;
 }
