@@ -50,8 +50,8 @@ public class MyBatisGeneratorDemo {
         // Table configuration
         TableConfiguration tableConfiguration = new TableConfiguration(context);
 
-//        tableConfiguration.setTableName("resume");
-//        tableConfiguration.setDomainObjectName("Resume");
+//        tableConfiguration.setTableName("interview");
+//        tableConfiguration.setDomainObjectName("Interview");
 
         context.addTableConfiguration(tableConfiguration);
 
