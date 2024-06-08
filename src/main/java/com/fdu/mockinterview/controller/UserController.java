@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Tag(name = "User Controller", description = "User management APIs")
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
     @GetMapping(value = "/getAllUsers")
