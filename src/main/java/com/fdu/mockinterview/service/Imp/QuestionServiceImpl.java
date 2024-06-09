@@ -20,6 +20,11 @@ public class QuestionServiceImpl implements QuestionService {
         return questionMapper.selectAll();
     }
 
+
+    public List<Question> getAllQuestionByUserIdPages(int pageNum, int pageSize, Integer interviewId) {
+        int offset = (pageNum - 1) * pageSize;
+        return questionMapper.selectQuestionByInterviewIdPages(offset, pageSize, interviewId);
+    }
     @Override
     public Question getQuestionById(Integer id) {
         return questionMapper.selectByPrimaryKey(id);

@@ -27,7 +27,7 @@ public class ResumeController {
         return resumeService.getAllResumesByUserId(userId);
     }
 
-    @GetMapping(value = "/selectAllByUserIdPages")
+    @GetMapping(value = "/selectByUserIdPages")
     public List<Resume> selectAllByUserIdPages(@RequestParam(defaultValue = "1") int pageNum,
                                                @RequestParam(defaultValue = "10") int pageSize,
                                                @RequestParam int userId) {

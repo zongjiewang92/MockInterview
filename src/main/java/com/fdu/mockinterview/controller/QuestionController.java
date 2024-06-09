@@ -1,6 +1,7 @@
 package com.fdu.mockinterview.controller;
 
 import com.fdu.mockinterview.entity.Question;
+import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.service.QuestionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,15 @@ public class QuestionController {
     public List<Question> getAllQuestions() {
         return questionService.getAllQuestions();
     }
+
+
+    @GetMapping(value = "/selectByInterviewIdPages")
+    public List<Question> selectByInterviewIdPages(@RequestParam(defaultValue = "1") int pageNum,
+                                               @RequestParam(defaultValue = "10") int pageSize,
+                                               @RequestParam int interviewId) {
+        return questionService.getAllQuestionByUserIdPages(pageNum, pageSize, interviewId);
+    }
+
 
     @GetMapping("/{id}")
     public Question getQuestionById(@PathVariable Integer id) {
