@@ -1,6 +1,7 @@
 package com.fdu.mockinterview.service.Imp;
 
 import com.fdu.mockinterview.entity.Interview;
+import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.InterviewMapper;
 import com.fdu.mockinterview.service.InterviewService;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,17 @@ public class InterviewServiceImpl implements InterviewService {
     @Override
     public List<Interview> getAllInterviews() {
         return interviewMapper.selectAll();
+    }
+
+    @Override
+    public List<Interview> getAllInterviewsByUserId(Integer userId) {
+        return interviewMapper.selectInterviewByUserId(userId);
+    }
+
+    @Override
+    public List<Interview> getAllInterviewsByUserIdPages(int pageNum, int pageSize, Integer userId) {
+        int offset = (pageNum - 1) * pageSize;
+        return interviewMapper.selectInterviewByUserIdPages(offset, pageSize, userId);
     }
 
     @Override
