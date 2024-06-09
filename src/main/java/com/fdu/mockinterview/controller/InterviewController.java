@@ -55,4 +55,12 @@ public class InterviewController {
     public void deleteInterview(@PathVariable Integer id) {
         interviewService.deleteInterview(id);
     }
+
+
+    // TODO Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
+
+
+    // TODO Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
+
+
 }

@@ -75,21 +75,14 @@ public class ResumeController {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload.");
         }
-
         return resumeService.uploadResumeFile(file, resumeId, fileType);
-
     }
-
-
 
     @GetMapping("/download/{resumeId:.+}")
     @Operation(summary = "Download a file")
     public ResponseEntity<org.springframework.core.io.Resource> downloadFile(@PathVariable Integer resumeId) {
 
         return resumeService.downloadResumeFile(resumeId);
-
-
-
     }
 
 

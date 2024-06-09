@@ -51,4 +51,11 @@ public class QuestionController {
     public void deleteQuestion(@PathVariable Integer id) {
         questionService.deleteQuestion(id);
     }
+
+
+    // TODO question answer end -> upload answer media file -> save media file -> call AI do sound transit to text, get AI_score, AI_result -> save answer text to table
+
+    // TODO review -> download answer media file, provide to front-end
+
+
 }
