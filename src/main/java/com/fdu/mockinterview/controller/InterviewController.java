@@ -1,7 +1,6 @@
 package com.fdu.mockinterview.controller;
 
 import com.fdu.mockinterview.entity.Interview;
-import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.service.InterviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
