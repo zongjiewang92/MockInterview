@@ -120,6 +120,13 @@ public interface QuestionMapper {
     })
     List<Question> selectQuestionByInterviewIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer interviewId);
 
+    @Select({
+            "select",
+            "COUNT(*) ",
+            "from question",
+            "where interview_id = #{interviewId,jdbcType=INTEGER}"
+    })
+    long countQuestionByUserId(int interviewId);
 
 
     /**
@@ -141,4 +148,6 @@ public interface QuestionMapper {
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Question record);
+
+
 }

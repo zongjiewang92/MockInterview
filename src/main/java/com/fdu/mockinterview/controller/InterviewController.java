@@ -1,8 +1,12 @@
 package com.fdu.mockinterview.controller;
 
+import com.fdu.mockinterview.common.PageResult;
+import com.fdu.mockinterview.common.Result;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.service.InterviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,42 +22,46 @@ public class InterviewController {
     private InterviewService interviewService;
 
     @GetMapping(value = "/getAllInterviews")
-    public List<Interview> getAllInterviews() {
-        return interviewService.getAllInterviews();
+    public ResponseEntity<Result<List<Interview>>> getAllInterviews() {
+        List<Interview> allInterviews = interviewService.getAllInterviews();
+        return ResponseEntity.ok(ResultBuilder.success(allInterviews));
     }
 
 
-    @GetMapping(value = "/getAllInterviewsByUserId/{userId}")
-    public List<Interview> getAllResumesByUserId(@PathVariable Integer userId) {
-        return interviewService.getAllInterviewsByUserId(userId);
+    @GetMapping(value = "/getInterviewsByUserId/{userId}")
+    public ResponseEntity<Result<List<Interview>>> getInterviewsByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.getAllInterviewsByUserId(userId)));
     }
 
     @GetMapping(value = "/selectByUserIdPages")
-    public List<Interview> selectByUserIdPages(@RequestParam(defaultValue = "1") int pageNum,
-                                               @RequestParam(defaultValue = "10") int pageSize,
-                                               @RequestParam int userId) {
+    public ResponseEntity<PageResult<List<Interview>>> selectByUserIdPages(@RequestParam(defaultValue = "1") int pageNum,
+                                                                           @RequestParam(defaultValue = "10") int pageSize,
+                                                                           @RequestParam int userId) {
+
+
         return interviewService.getAllInterviewsByUserIdPages(pageNum, pageSize, userId);
     }
 
 
     @GetMapping("/{id}")
-    public Interview getInterviewById(@PathVariable Integer id) {
-        return interviewService.getInterviewById(id);
+    public ResponseEntity<Result<Interview>> getInterviewById(@PathVariable Integer id) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.getInterviewById(id)));
     }
 
     @PostMapping("/createInterview")
-    public Interview createInterview(@RequestBody Interview interview) {
-        return interviewService.createInterview(interview);
+    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Interview interview) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(interview)));
     }
 
     @PutMapping("/updateInterview")
-    public Interview updateInterview(@RequestBody Interview interview) {
-        return interviewService.updateInterview(interview);
+    public ResponseEntity<Result<Interview>> updateInterview(@RequestBody Interview interview) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.updateInterview(interview)));
     }
 
     @DeleteMapping("/deleteInterview/{id}")
-    public void deleteInterview(@PathVariable Integer id) {
+    public ResponseEntity<Result<Integer>> deleteInterview(@PathVariable Integer id) {
         interviewService.deleteInterview(id);
+        return ResponseEntity.ok(ResultBuilder.success(id));
     }
 
 

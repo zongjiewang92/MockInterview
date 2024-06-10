@@ -1,6 +1,8 @@
 package com.fdu.mockinterview.service;
 
+import com.fdu.mockinterview.common.Result;
 import com.fdu.mockinterview.entity.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +15,11 @@ public interface UserService {
 
     User getUserById(Integer id);
 
-    User createUser(User user);
+    User getUserByUserName(String userName);
+
+    Integer countUserByUserName(String userName);
+
+    ResponseEntity<Result<User>> createUser(User user);
 
     User updateUser(User user);
 

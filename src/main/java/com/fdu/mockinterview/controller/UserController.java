@@ -1,9 +1,12 @@
 package com.fdu.mockinterview.controller;
 
+import com.fdu.mockinterview.common.Result;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.User;
 import com.fdu.mockinterview.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,27 +22,33 @@ public class UserController {
     private UserService userService;
 
     @GetMapping(value = "/getAllUsers")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Result<List<User>>> getAllUsers() {
+        return ResponseEntity.ok(ResultBuilder.success(userService.getAllUsers()));
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Integer id) {
-        return userService.getUserById(id);
+    public ResponseEntity<Result<User>> getUserById(@PathVariable Integer id) {
+        return ResponseEntity.ok(ResultBuilder.success(userService.getUserById(id)));
+    }
+
+    @GetMapping("/getUserByUserName")
+    public ResponseEntity<Result<User>> getUserByUserName(@RequestParam String userName) {
+        return ResponseEntity.ok(ResultBuilder.success(userService.getUserByUserName(userName)));
     }
 
     @PostMapping("/createUser")
-    public User createUser(@RequestBody User user) {
+    public ResponseEntity<Result<User>> createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
     @PutMapping("/updateUser")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public ResponseEntity<Result<User>> updateUser(@RequestBody User user) {
+        return ResponseEntity.ok(ResultBuilder.success(userService.updateUser(user)));
     }
 
     @DeleteMapping("/deleteUser/{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Result<Integer>> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
+        return ResponseEntity.ok(ResultBuilder.success(id));
     }
 }

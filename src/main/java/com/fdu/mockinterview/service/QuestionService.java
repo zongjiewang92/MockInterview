@@ -1,6 +1,5 @@
 package com.fdu.mockinterview.service;
 
-import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.entity.Question;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,7 @@ public interface QuestionService {
 
     List<Question> getAllQuestions();
 
-    List<Question> getAllQuestionByUserIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer userId);
+    List<Question> getQuestionByUserIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer userId);
 
     Question getQuestionById(Integer id);
 
@@ -22,4 +21,6 @@ public interface QuestionService {
     Question updateQuestion(Question question);
 
     void deleteQuestion(Integer id);
+
+    long countQuestionByUserId(int interviewId);
 }

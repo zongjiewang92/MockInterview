@@ -1,9 +1,12 @@
 package com.fdu.mockinterview.service.Imp;
 
+import com.fdu.mockinterview.common.PageResult;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.InterviewMapper;
 import com.fdu.mockinterview.service.InterviewService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,9 +30,19 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public List<Interview> getAllInterviewsByUserIdPages(int pageNum, int pageSize, Integer userId) {
+    public ResponseEntity<PageResult<List<Interview>>> getAllInterviewsByUserIdPages(int pageNum, int pageSize, Integer userId) {
         int offset = (pageNum - 1) * pageSize;
-        return interviewMapper.selectInterviewByUserIdPages(offset, pageSize, userId);
+        List<Interview> interviewList = interviewMapper.selectInterviewByUserIdPages(offset, pageSize, userId);
+
+        long totalElements = interviewMapper.countInterviewByUserId(userId);
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+
+        return ResponseEntity.ok(ResultBuilder.paginatedSuccess(interviewList, pageNum, pageSize, totalElements, totalPages));
+    }
+
+    @Override
+    public Integer countInterviewByUserId(Integer userId) {
+        return interviewMapper.countInterviewByUserId(userId);
     }
 
     @Override

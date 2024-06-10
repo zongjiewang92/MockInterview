@@ -21,7 +21,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    public List<Question> getAllQuestionByUserIdPages(int pageNum, int pageSize, Integer interviewId) {
+    public List<Question> getQuestionByUserIdPages(int pageNum, int pageSize, Integer interviewId) {
         int offset = (pageNum - 1) * pageSize;
         return questionMapper.selectQuestionByInterviewIdPages(offset, pageSize, interviewId);
     }
@@ -45,5 +45,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void deleteQuestion(Integer id) {
         questionMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public long countQuestionByUserId(int interviewId) {
+        return questionMapper.countQuestionByUserId(interviewId);
     }
 }

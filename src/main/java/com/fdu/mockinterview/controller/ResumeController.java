@@ -1,9 +1,11 @@
 package com.fdu.mockinterview.controller;
 
+import com.fdu.mockinterview.common.PageResult;
+import com.fdu.mockinterview.common.Result;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,40 +28,42 @@ public class ResumeController {
     private ResumeService resumeService;
 
     @GetMapping(value = "/getAllResumes")
-    public List<Resume> getAllResumes() {
-        return resumeService.getAllResumes();
+    public ResponseEntity<Result<List<Resume>>> getAllResumes() {
+        return ResponseEntity.ok(ResultBuilder.success(resumeService.getAllResumes()));
     }
 
-    @GetMapping(value = "/getAllResumesByUserId/{userId}")
-    public List<Resume> getAllResumesByUserId(@PathVariable Integer userId) {
-        return resumeService.getAllResumesByUserId(userId);
+    @GetMapping(value = "/getResumesByUserId/{userId}")
+    public ResponseEntity<Result<List<Resume>>> getResumesByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(ResultBuilder.success(resumeService.getAllResumesByUserId(userId)));
     }
 
     @GetMapping(value = "/selectByUserIdPages")
-    public List<Resume> selectAllByUserIdPages(@RequestParam(defaultValue = "1") int pageNum,
-                                               @RequestParam(defaultValue = "10") int pageSize,
-                                               @RequestParam int userId) {
-        return resumeService.selectAllByUserIdPages(pageNum, pageSize, userId);
+    public ResponseEntity<PageResult<List<Resume>>> selectByUserIdPages(@RequestParam(defaultValue = "1") int pageNum,
+                                                                           @RequestParam(defaultValue = "10") int pageSize,
+                                                                           @RequestParam int userId) {
+        return resumeService.selectByUserIdPages(pageNum, pageSize, userId);
+
     }
 
     @GetMapping("/{id}")
-    public Resume getResumeById(@PathVariable Integer id) {
-        return resumeService.getResumeById(id);
+    public ResponseEntity<Result<Resume>> getResumeById(@PathVariable Integer id) {
+        return ResponseEntity.ok(ResultBuilder.success(resumeService.getResumeById(id)));
     }
 
     @PostMapping("/createResume")
-    public Resume createResume(@RequestBody Resume Resume) {
-        return resumeService.createResume(Resume);
+    public ResponseEntity<Result<Resume>> createResume(@RequestBody Resume Resume) {
+        return ResponseEntity.ok(ResultBuilder.success(resumeService.createResume(Resume)));
     }
 
     @PutMapping("/updateResume")
-    public Resume updateResume(@RequestBody Resume Resume) {
-        return resumeService.updateResume(Resume);
+    public ResponseEntity<Result<Resume>> updateResume(@RequestBody Resume Resume) {
+        return ResponseEntity.ok(ResultBuilder.success(resumeService.updateResume(Resume)));
     }
 
     @DeleteMapping("/deleteResume/{id}")
-    public void deleteResume(@PathVariable Integer id) {
+    public ResponseEntity<Result<Integer>> deleteResume(@PathVariable Integer id) {
         resumeService.deleteResume(id);
+        return ResponseEntity.ok(ResultBuilder.success(id));
     }
 
 

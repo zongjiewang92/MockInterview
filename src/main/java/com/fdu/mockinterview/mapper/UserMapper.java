@@ -16,6 +16,13 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE id = #{id}")
     User findById(Integer id);
 
+    @Select("SELECT * FROM user WHERE user_name = #{userName, jdbcType=VARCHAR}")
+    User findByUserName(String userName);
+
+    @Select("SELECT COUNT(*) FROM user WHERE user_name = #{userName, jdbcType=VARCHAR}")
+    Integer countByUserName(String userName);
+
+
     @Insert("INSERT INTO user(user_name, passwd, email, first_name, last_name) VALUES(#{userName}, #{passwd}, #{email}, #{firstName}, #{lastName})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(User user);

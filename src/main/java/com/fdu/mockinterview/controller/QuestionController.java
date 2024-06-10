@@ -1,9 +1,12 @@
 package com.fdu.mockinterview.controller;
 
+import com.fdu.mockinterview.common.PageResult;
+import com.fdu.mockinterview.common.Result;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Question;
-import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.service.QuestionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,37 +22,42 @@ public class QuestionController {
     private QuestionService questionService;
 
     @GetMapping(value = "/getAllQuestions")
-    public List<Question> getAllQuestions() {
-        return questionService.getAllQuestions();
+    public ResponseEntity<Result<List<Question>>> getAllQuestions() {
+        return ResponseEntity.ok(ResultBuilder.success(questionService.getAllQuestions()));
     }
 
 
     @GetMapping(value = "/selectByInterviewIdPages")
-    public List<Question> selectByInterviewIdPages(@RequestParam(defaultValue = "1") int pageNum,
-                                               @RequestParam(defaultValue = "10") int pageSize,
-                                               @RequestParam int interviewId) {
-        return questionService.getAllQuestionByUserIdPages(pageNum, pageSize, interviewId);
+    public ResponseEntity<PageResult<List<Question>>> selectByInterviewIdPages(@RequestParam(defaultValue = "1") int pageNum,
+                                                                               @RequestParam(defaultValue = "10") int pageSize,
+                                                                               @RequestParam int interviewId) {
+        List<Question> questionList = questionService.getQuestionByUserIdPages(pageNum, pageSize, interviewId);
+        long totalElements = questionService.countQuestionByUserId(interviewId);
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+
+        return ResponseEntity.ok(ResultBuilder.paginatedSuccess(questionList, pageNum, pageSize, totalElements, totalPages));
     }
 
 
     @GetMapping("/{id}")
-    public Question getQuestionById(@PathVariable Integer id) {
-        return questionService.getQuestionById(id);
+    public ResponseEntity<Result<Question>> getQuestionById(@PathVariable Integer id) {
+        return ResponseEntity.ok(ResultBuilder.success(questionService.getQuestionById(id)));
     }
 
     @PostMapping("/createQuestion")
-    public Question createQuestion(@RequestBody Question question) {
-        return questionService.createQuestion(question);
+    public ResponseEntity<Result<Question>> createQuestion(@RequestBody Question question) {
+        return ResponseEntity.ok(ResultBuilder.success(questionService.createQuestion(question)));
     }
 
     @PutMapping("/updateQuestion")
-    public Question updateQuestion(@RequestBody Question question) {
-        return questionService.updateQuestion(question);
+    public ResponseEntity<Result<Question>> updateQuestion(@RequestBody Question question) {
+        return ResponseEntity.ok(ResultBuilder.success(questionService.updateQuestion(question)));
     }
 
     @DeleteMapping("/deleteQuestion/{id}")
-    public void deleteQuestion(@PathVariable Integer id) {
+    public ResponseEntity<Result<Integer>> deleteQuestion(@PathVariable Integer id) {
         questionService.deleteQuestion(id);
+        return ResponseEntity.ok(ResultBuilder.success(id));
     }
 
 

@@ -1,5 +1,7 @@
 package com.fdu.mockinterview.service.Imp;
 
+import com.fdu.mockinterview.common.PageResult;
+import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.ResumeMapper;
 import com.fdu.mockinterview.service.ResumeService;
@@ -46,9 +48,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<Resume> selectAllByUserIdPages(int pageNum, int pageSize, Integer userId) {
+    public ResponseEntity<PageResult<List<Resume>>> selectByUserIdPages(int pageNum, int pageSize, Integer userId) {
         int offset = (pageNum - 1) * pageSize;
-        return resumeMapper.selectAllByUserIdPages(offset, pageSize, userId);
+        List<Resume> resumeList = resumeMapper.selectByUserIdPages(offset, pageSize, userId);
+
+        long totalElements = resumeMapper.countResumeByUserId(userId);
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+
+        return ResponseEntity.ok(ResultBuilder.paginatedSuccess(resumeList, pageNum, pageSize, totalElements, totalPages));
+
     }
 
     @Override

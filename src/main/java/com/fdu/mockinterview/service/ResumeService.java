@@ -1,5 +1,6 @@
 package com.fdu.mockinterview.service;
 
+import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.entity.Resume;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.core.io.Resource;
@@ -16,7 +17,7 @@ public interface ResumeService {
     List<Resume> getAllResumes();
     List<Resume> getAllResumesByUserId(Integer userId);
 
-    List<Resume> selectAllByUserIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer userId);
+    ResponseEntity<PageResult<List<Resume>>> selectByUserIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer userId);
 
     Resume getResumeById(Integer id);
 
