@@ -10,7 +10,7 @@ create table user
         constraint id
             primary key autoincrement,
     user_name   TEXT not null,
-    passwd      TEXT,
+    passwd      TEXT,  # bcrypt, salted and hashed password
     create_date DATETIME default CURRENT_TIMESTAMP,
     email       TEXT,
     first_name  TEXT,
