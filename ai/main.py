@@ -80,3 +80,13 @@ def main(file_path, company, position):
     extracted_info = extract_info(resume_text)
 
     conduct_interview(extracted_info, company, position)
+
+if __name__ == "__main__":
+    file_path = "../data/Parsiri_MLE.pdf"
+    company = "Tech Innovations Inc."
+    position = "Machine Learning Engineer"
+
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+    else:
+        main(file_path, company, position)
