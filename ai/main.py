@@ -19,9 +19,35 @@ def conduct_interview(extracted_info, company, position):
     llm = OpenAI(api_key=openai.api_key)
     candidate_answers = []
 
+    for i, question in enumerate(questions):
+        prompt_template = PromptTemplate(
+            input_variables=["info", "question"],
+            template="""
+            You are an interviewer. The candidate's resume information is as follows:
+            
+            {info}
+            
+            Ask the following question:
+            {question}
+            """
+        )
+        
+        chain = LLMChain(prompt=prompt_template, llm=llm)
+
+        if i == 0:
+            result = chain.run({"info": extracted_info, "question": question})
+        else:
+            result = chain.run({"info": extracted_info + f"\nCandidate's previous answer: {candidate_answers[-1]}", "question": question})
+
+        print(f"Interviewer: {question}")
+        candidate_answer = input("Candidate: ")
+        candidate_answers.append(candidate_answer)
+        print(f"Candidate: {candidate_answer}\n")
+
     prompt_template_evaluation = PromptTemplate(
         input_variables=["info", "answers"],
         template="""
+
         """
     )
 
