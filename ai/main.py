@@ -5,7 +5,7 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 
-openai.api_key = '' 
+openai.api_key = 'key' 
 
 def conduct_interview(extracted_info, company, position):
     questions = [
@@ -18,3 +18,14 @@ def conduct_interview(extracted_info, company, position):
 
     llm = OpenAI(api_key=openai.api_key)
     candidate_answers = []
+
+
+
+def main(file_path, company, position):
+    if file_path.endswith('.pdf'):
+        loader = PyPDFLoader(file_path)
+    elif file_path.endswith('.docx'):
+        loader = Docx2txtLoader(file_path)
+    else:
+        print("Unsupported file format.")
+        return
