@@ -5,7 +5,34 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 
-openai.api_key = 'key' 
+openai.api_key = '' 
+
+
+def extract_info(text):
+    prompt_template = PromptTemplate(
+        input_variables=["resume_text"],
+        template="""
+        Extract the following information from the resume text:
+        1. Name
+        2. Education (including school name and graduation date)
+        3. Work experience (including company name and duration)
+        
+        Resume text:
+        {resume_text}
+        
+        Information:
+        Name: 
+        Education: 
+        Work Experience: 
+        """
+    )
+
+    llm = OpenAI(api_key=openai.api_key)
+    chain = LLMChain(prompt=prompt_template, llm=llm)
+
+    result = chain.run({"resume_text": text})
+    return result
+
 
 def conduct_interview(extracted_info, company, position):
     questions = [
@@ -74,15 +101,16 @@ def main(file_path, company, position):
     else:
         print("Unsupported file format.")
         return
-    
+
     documents = loader.load()
     resume_text = " ".join([doc.page_content for doc in documents])
     extracted_info = extract_info(resume_text)
 
     conduct_interview(extracted_info, company, position)
 
+
 if __name__ == "__main__":
-    file_path = "../data/Parsiri_MLE.pdf"
+    file_path = "../data/resume1.pdf"
     company = "Tech Innovations Inc."
     position = "Machine Learning Engineer"
 
