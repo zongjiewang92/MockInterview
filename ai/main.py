@@ -19,6 +19,19 @@ def conduct_interview(extracted_info, company, position):
     llm = OpenAI(api_key=openai.api_key)
     candidate_answers = []
 
+    prompt_template_evaluation = PromptTemplate(
+        input_variables=["info", "answers"],
+        template="""
+        """
+    )
+
+    answers = "\n".join([f"Q: {questions[i]}\nA: {answer}" for i, answer in enumerate(candidate_answers)])
+    chain = LLMChain(prompt=prompt_template_evaluation, llm=llm)
+    evaluation_result = chain.run({"info": extracted_info, "answers": answers})
+
+    print("Evaluation result:")
+    print(evaluation_result)
+
 
 
 def main(file_path, company, position):
