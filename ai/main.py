@@ -47,7 +47,14 @@ def conduct_interview(extracted_info, company, position):
     prompt_template_evaluation = PromptTemplate(
         input_variables=["info", "answers"],
         template="""
-
+        You are an interviewer. The candidate's resume information is as follows:
+        
+        {info}
+        
+        The candidate's answers to the interview questions are as follows:
+        {answers}
+        
+        Evaluate the candidate based on their answers and give a STAR rating.
         """
     )
 
@@ -59,7 +66,6 @@ def conduct_interview(extracted_info, company, position):
     print(evaluation_result)
 
 
-
 def main(file_path, company, position):
     if file_path.endswith('.pdf'):
         loader = PyPDFLoader(file_path)
@@ -68,3 +74,5 @@ def main(file_path, company, position):
     else:
         print("Unsupported file format.")
         return
+    
+    
