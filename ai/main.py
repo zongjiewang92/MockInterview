@@ -75,4 +75,8 @@ def main(file_path, company, position):
         print("Unsupported file format.")
         return
     
-    
+    documents = loader.load()
+    resume_text = " ".join([doc.page_content for doc in documents])
+    extracted_info = extract_info(resume_text)
+
+    conduct_interview(extracted_info, company, position)
