@@ -1,5 +1,7 @@
 package com.fdu.mockinterview.controller;
 
+import com.fdu.mockinterview.auth.JwtHelper;
+import com.fdu.mockinterview.auth.LoginResponse;
 import com.fdu.mockinterview.common.Result;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.User;
@@ -7,6 +9,10 @@ import com.fdu.mockinterview.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,8 +24,15 @@ import java.util.List;
 @Tag(name = "User Controller", description = "User management APIs")
 public class UserController {
 
+    private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
     @Resource
     private UserService userService;
+
+    public UserController(BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager) {
+        this.passwordEncoder = bCryptPasswordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
 
     @GetMapping(value = "/getAllUsers")
     public ResponseEntity<Result<List<User>>> getAllUsers() {
@@ -39,6 +52,14 @@ public class UserController {
     @PostMapping("/createUser")
     public ResponseEntity<Result<User>> createUser(@RequestBody User user) {
         return userService.createUser(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody User user) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPasswd()));
+        String token = JwtHelper.generateToken(user.getUserName());
+
+        return ResponseEntity.ok(new LoginResponse(user.getUserName(), token));
     }
 
     @PutMapping("/updateUser")
