@@ -5,6 +5,7 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 
 class InterviewerStateMachine:
+    # Constructor : __init__
     def __init__(self, company, position, resume_text, extracted_info):
         self.state = 'INIT'
         self.company = company
@@ -22,8 +23,38 @@ class InterviewerStateMachine:
         self.current_question_index = 0
         self.cadidate_answers = []
 
+    # state : INIT, WELCOME, ASK_QUESTION, EVALUATE 
+    def next_state(self, user_input=None)
+        if self.state == 'INIT':
+            # print(f'Current state {self.state}')
+            self.state = 'ASK_QUESTION'
+            # print(f'Next state {self.state}')
+            return self._ask_question()
+        
+        elif self.state == 'WELCOME':
+            # print(f'Current state {self.state}')
+            self.candidate_answers.append(user_input)
+            self.state = 'ASK_QUESTION'
+            # print(f'Next state {self.state}')
+            return self._ask_question()
+        
+        elif self.state == 'ASK_QUESTION':
+            # print(f'Current state {self.state}')
+            self.candidate_answers.append(user_input)
+            self.current_question_index += 1
+            # print(self.current_question_index, len(self.questions))
+            if self.current_question_index < len(self.questions):
+                # print(f'Next state {self.state}')
+                return self._ask_question()
+            else:
+                self.state = 'EVALUATE'
+                # print(f'Next state {self.state}')
+                return self._evaluate()
+
+    def _ask_question(self):
 
 
+    def _evaluate(self):
 
 
 
@@ -33,13 +64,13 @@ def service(interviewSM, candidate_input):
     if interviewSM.state == 'INIT':
 
     elif interviewSM.state == 'EVALUATE':
-
+        
     else:
 
 
 
 
-
+# if run this file directly : Ture (__name__ เป็นตัวแปรพิเศษใน Python ที่จะมีค่าเป็น "__main__" เมื่อไฟล์นั้นถูกรันโดยตรง แต่ถ้าRunจากไฟล์อื่น จะมีค่าเป็นชื่อของไฟล์ที่ import เข้ามา)
+# if import this file : False
 if __name__ == "__main__":
-
     pass
