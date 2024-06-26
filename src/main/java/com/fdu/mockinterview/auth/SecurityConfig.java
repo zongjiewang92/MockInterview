@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    public static final String adminRole = "ADMIN";
+    public static final String userRole = "USER";
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/**").permitAll()
                         .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/user/createUser").permitAll()
+                        .requestMatchers("/user/getAllUsers").hasAnyRole(adminRole)
 //                        .requestMatchers("/user/createUser").permitAll()
                         .anyRequest().authenticated()
                 )
