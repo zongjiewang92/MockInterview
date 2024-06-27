@@ -23,6 +23,7 @@ class InterviewerStateMachine:
         ]
         self.current_question_index = 0
         self.cadidate_answers = []
+        self.llm = OpenAI(api_key=openai.api_key)
 
     # state : INIT, WELCOME, ASK_QUESTION, EVALUATE 
     def next_state(self, user_input=None)
