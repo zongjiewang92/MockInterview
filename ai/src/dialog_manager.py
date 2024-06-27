@@ -58,6 +58,15 @@ class InterviewerStateMachine:
         return utils.call_tts_api(response_text, f"../output/R{self.current_question_index}_response.mp3")
 
     def _evaluate(self):
+        answers = "\n".join([f"Q: {self.questions[i]}\nA: {answer}" for i, answer in enumerate(self.candidate_answers)])
+        prompt_template_evaluation = PromptTemplate(
+            input_variables=["info", "answers"],
+            template="""
+            """
+        )
+        chain = LLMChain(prompt=prompt_template_evaluation, llm=self.llm)
+        evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
+        return utils.call_tts_api(evaluation_result, f"../output/R{self.current_question_index}_response.mp3")
 
 
 
