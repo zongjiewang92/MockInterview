@@ -8,7 +8,21 @@ from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 
 def extract_info(text):
     prompt_template = PromptTemplate(
-
+        input_variables=["resume_text"],
+        template="""
+        Extract the following information from the resume text:
+        1. Name
+        2. Education (including school name and graduation date)
+        3. Work experience (including company name and duration)
+        
+        Resume text:
+        {resume_text}
+        
+        Please provide the extracted information in the following format:
+        'Name: [Name Here]'
+        'Education: [Education Details Here]'
+        'Work Experience: [Work Experience Details Here]'
+        """.format(resume_text=text)
     )
     llm = OpenAI(api_key=openai.api_key)
     chain = LLMChain(prompt=prompt_template, llm=llm)
@@ -19,7 +33,7 @@ def extract_info(text):
 
     extracted_info = {}
 
-    return summary_info, resume_text, extracted_info
+    return result, extracted_info
 
 
 def parse_resume_file(file_path):
