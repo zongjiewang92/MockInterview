@@ -45,5 +45,9 @@ def call_asr_api(audio_path):
 
 
 def call_tts_api(text, audio_path):
-
+    client = openai.OpenAI(api_key=constant.jyOpenAIKey)
+    speech_file_path = Path(audio_path)
+    response = client.audio.speech.create(model="tts-1", voice="alloy", input=text)
+    response.stream_to_file(speech_file_path)
+    print(f"AI response: {text}")
     return audio_path
