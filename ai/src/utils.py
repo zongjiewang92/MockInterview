@@ -23,6 +23,16 @@ def extract_info(text):
 
 
 def parse_resume_file(file_path):
+    if file_path.endswith('.pdf'):
+        loader = PyPDFLoader(file_path)
+    elif file_path.endswith('.docx'):
+        loader = Docx2txtLoader(file_path)
+    else:
+        print("Unsupported file format.")
+        return
+    documents = loader.load()
+    resume_text = " ".join([doc.page_content for doc in documents])
+    summary_info, extracted_info = extract_info(resume_text)
 
     return summary_info, resume_text, extracted_info
 
