@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 class InterviewerStateMachine:
     # Constructor : __init__
     def __init__(self, company, position, resume_text, extracted_info):
+        # set attribute
         self.state = 'INIT'
         self.company = company
         self.position = position
@@ -52,7 +53,9 @@ class InterviewerStateMachine:
                 return self._evaluate()
 
     def _ask_question(self):
-
+        question = self.questions[self.current_question_index]
+        response_text = question
+        return utils.call_tts_api(response_text, f"../output/R{self.current_question_index}_response.mp3")
 
     def _evaluate(self):
 
