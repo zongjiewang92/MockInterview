@@ -62,14 +62,21 @@ class InterviewerStateMachine:
         prompt_template_evaluation = PromptTemplate(
             input_variables=["info", "answers"],
             template="""
+            You are a mock interviewer. The candidate's resume information is as follows:
+
+            {info}
+
+            You have just conducted a mock interview, and the complete dialogue from the interview is as follows:
+
+            {answers}
+
+            Now, please first assign a score to the candidate's mock interview performance out of a total of 10 points. Then, provide some feedback and guidance based on the interaction during the interview. You may also suggest how the candidate could improve their responses based on specific details from their resume.
+
             """
         )
         chain = LLMChain(prompt=prompt_template_evaluation, llm=self.llm)
         evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
         return utils.call_tts_api(evaluation_result, f"../output/R{self.current_question_index}_response.mp3")
-
-
-
 
 
 def service(interviewSM, candidate_input):
