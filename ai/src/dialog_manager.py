@@ -80,13 +80,21 @@ class InterviewerStateMachine:
 
 
 def service(interviewSM, candidate_input):
+    # Simulate interaction with backend
     if interviewSM.state == 'INIT':
-
+        # Start interviewSM
+        audio_response_path = interviewSM.next_state()
     elif interviewSM.state == 'EVALUATE':
-        
+        audio_response_path = interviewSM._evaluate()
     else:
+        # Simulate receiving user audio input from backend
+        user_audio_path = candidate_input
+        user_input_text = utils.call_asr_api(user_audio_path)
+        audio_response_path = interviewSM.next_state(user_input_text)
 
-
+    # Send audio_response_path to backend
+    print(f"AI respones are store in : {audio_response_path}")
+    return interviewSM
 
 
 # if run this file directly : Ture (__name__ เป็นตัวแปรพิเศษใน Python ที่จะมีค่าเป็น "__main__" เมื่อไฟล์นั้นถูกรันโดยตรง แต่ถ้าRunจากไฟล์อื่น จะมีค่าเป็นชื่อของไฟล์ที่ import เข้ามา)
