@@ -32,7 +32,22 @@ def extract_info(text):
     lines = output.split('\n')
 
     extracted_info = {}
-
+    for line in lines:
+        print(f"Processing line: {line}")  # Debugging each line
+        if "Name:" in line:
+            extracted_info["Name"] = line.split("Name: ")[1].strip()
+        elif "Education:" in line:
+            try:
+                extracted_info["Education"] = line.split("Education: ")[1].strip()
+            except IndexError:
+                print("Error parsing Work Experience. Check formatting.")
+                extracted_info["Work Experience"] = "Error parsing. Check data."                
+        elif "Work Experience:" in line:
+            try:
+                extracted_info["Work Experience"] = line.split("Work Experience: ")[1].strip()
+            except IndexError:
+                print("Error parsing Work Experience. Check formatting.")
+                extracted_info["Work Experience"] = "Error parsing. Check data."
     return result, extracted_info
 
 
