@@ -33,11 +33,14 @@ def parse_resume_file(file_path):
     documents = loader.load()
     resume_text = " ".join([doc.page_content for doc in documents])
     summary_info, extracted_info = extract_info(resume_text)
-
     return summary_info, resume_text, extracted_info
 
-def call_asr_api(audio_path):
 
+def call_asr_api(audio_path):
+    client = openai.OpenAI(api_key=constant.jyOpenAIKey)
+    audio_file= open(audio_path, "rb")
+    transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file, language="en")
+    print(f"Candidate audio asr result:{transcription.text}")
     return transcription.text
 
 
