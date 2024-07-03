@@ -139,3 +139,7 @@ END;
 
 
 2. Restful api -> http://localhost:8080/swagger-ui/index.html
+
+
+3. For any testing purpose, and you do not want to ues authentication, just modify "auth.SecurityConfig.java" -> filterChain -> .anyRequest().permitAll()
+    If you do want to test with authentication, login first, then click the "Authorize" button to set the token

@@ -7,6 +7,8 @@ import com.fdu.mockinterview.mapper.UserMapper;
 import com.fdu.mockinterview.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +21,12 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+
+
+    private PasswordEncoder passwordEncoder;
+    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.passwordEncoder = bCryptPasswordEncoder;
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -46,12 +54,20 @@ public class UserServiceImpl implements UserService {
         if (count>0){
             return ResponseEntity.ok(ResultBuilder.error("UserName already exist.", null));
         }
+        // use BCryptPasswordEncoder to encode the password, salt and hash the password
+        String encodedPassword = passwordEncoder.encode(user.getPasswd());
+        user.setPasswd(encodedPassword);
         userMapper.insert(user);
         return ResponseEntity.ok(ResultBuilder.success(userMapper.findById(user.getId())));
     }
 
     @Override
     public User updateUser(User user) {
+        // process for update password
+        if(user.getPasswd() != null && !user.getPasswd().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(user.getPasswd());
+            user.setPasswd(encodedPassword);
+        }
         userMapper.updateUser(user);
         return userMapper.findById(user.getId());
     }
