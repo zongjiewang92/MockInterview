@@ -3,7 +3,7 @@ import utils
 import dialog_manager
 import constant
 
-openai.api_key = constant.jyOpenAIKey
+openai.api_key = constant.MyOpenaiKey
 
 # Define Variables
 company = "Tech Innovations Inc."
