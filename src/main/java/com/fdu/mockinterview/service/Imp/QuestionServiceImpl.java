@@ -1,5 +1,7 @@
 package com.fdu.mockinterview.service.Imp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.QuestionMapper;
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -32,6 +35,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Resource
     private QuestionMapper questionMapper;
+    @Resource
+    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
 
     @Override
     public List<Question> getAllQuestions() {
@@ -129,5 +134,23 @@ public class QuestionServiceImpl implements QuestionService {
             logger.info("Download file exception:", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    @Override
+    public ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId) {
+        // upload answer media file
+        String filePathName = uploadAnswerFile(file, questionId);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("user_input", filePathName);
+
+        // call AI service and return result
+        return webClient.post()
+                .uri("/service")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(jsonObject)
+                .retrieve()
+                .toEntity(String.class)
+                .block();
     }
 }

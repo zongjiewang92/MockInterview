@@ -4,13 +4,18 @@ from flask_session import Session
 import dialog_manager
 import pickle
 
+import utils
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-# Create an instance of the InterviewerStateMachine class
-state_machine = None
+
+@app.route('/parseResumeFile', methods=['GET'])
+def parse_resume_file():
+    summary_info, resume_text, extracted_info = utils.parse_resume_file(request.args.get('file_path'))
+    return jsonify({"summary_info": summary_info, "resume_text": resume_text, "extracted_info": extracted_info}), 200
 
 
 @app.route('/initialize', methods=['POST'])
@@ -25,6 +30,12 @@ def initialize():
     return jsonify({"message": "State Machine Initialized"}), 200
 
 
+@app.route('/getAllQuestions', methods=['GET'])
+def initialize():
+    interviewSM = pickle.loads(session['interviewSM'])
+    return jsonify({"questions": interviewSM.questions}), 200
+
+
 @app.route('/service', methods=['POST'])
 def next_state():
     data = request.get_json()
@@ -33,6 +44,12 @@ def next_state():
     interviewSM = dialog_manager.service(interviewSM, candidate_input=user_input)
     session['interviewSM'] = pickle.dumps(interviewSM)
     return jsonify({"message": "State Machine Updated"}), 200
+
+
+@app.route('/getInterviewEvaluation', methods=['GET'])
+def get_interview_evaluation():
+    interviewSM = pickle.loads(session['interviewSM'])
+    return jsonify({"evaluation_result": interviewSM.evaluation_result, "evaluation_result_audio": interviewSM.evaluation_result_audio}), 200
 
 
 if __name__ == '__main__':

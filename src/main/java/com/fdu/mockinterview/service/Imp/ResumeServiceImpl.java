@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 
 @Service("resumeService")
@@ -33,6 +35,8 @@ public class ResumeServiceImpl implements ResumeService {
     private static final String DIR_SPLITER = "/";
 
 
+    @Resource
+    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
 
     @Resource
     private ResumeMapper resumeMapper;
@@ -112,9 +116,14 @@ public class ResumeServiceImpl implements ResumeService {
             resume.setCvName(originalFilename);
             resume.setCvType(fileType);
 
-//            TODO  call ai api get cv_context
 //            String cvContext = ai.getCvContext(file);
 //            resume.setCvContext();
+            String jsonResponse = webClient.get()
+                    .uri("/parseResumeFile?file_path=" + Paths.get(resume.getCvDirectory()).resolve(resume.getCvName()).normalize())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            resume.setCvContext(jsonResponse);
 
             resumeMapper.updateByPrimaryKey(resume);
 

@@ -4,6 +4,7 @@ import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.common.Result;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
+import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.service.InterviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -65,10 +66,23 @@ public class InterviewController {
     }
 
 
-    // TODO Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
+    // Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
+    @PostMapping("/startInterview")
+    public ResponseEntity<List<Question>> startInterview(@RequestBody Interview interview,
+                                                         @RequestParam Integer userId,
+                                                         @RequestParam Integer cvId,
+                                                         @RequestParam Integer jobId,
+                                                         @RequestParam String companyName,
+                                                         @RequestParam String position) {
+        return interviewService.startInterview(interview, userId, cvId, jobId, companyName, position);
+    }
 
-
-    // TODO Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
-
+    // Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
+    // Actually there is no endInterview, the interview result will be available after last question answered
+    // so there only need to get the interview result
+    @PostMapping("/getInterviewEvaluation")
+    public ResponseEntity<Result<Interview>> getInterviewEvaluation(@RequestBody Interview interview) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.getInterviewEvaluation(interview)));
+    }
 
 }

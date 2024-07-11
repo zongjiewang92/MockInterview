@@ -28,4 +28,6 @@ public interface QuestionService {
     long countQuestionByUserId(int interviewId);
     String uploadAnswerFile(MultipartFile file, Integer questionsId);
     ResponseEntity<Resource> downloadAnswerFile(Integer resumeId);
+
+    ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId);
 }

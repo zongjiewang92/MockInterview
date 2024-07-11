@@ -1,23 +1,44 @@
 package com.fdu.mockinterview.service.Imp;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
+import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.InterviewMapper;
 import com.fdu.mockinterview.service.InterviewService;
+import com.fdu.mockinterview.service.QuestionService;
+import com.fdu.mockinterview.service.ResumeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Service("interviewService")
 public class InterviewServiceImpl implements InterviewService {
+    private static final Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
     @Resource
     private InterviewMapper interviewMapper;
+    @Resource
+    private ResumeService resumeService;  // how to initialize this bean?
+    private QuestionService questionService;  // how to initialize this bean?
+    @Resource
+    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
 
     @Override
     public List<Interview> getAllInterviews() {
@@ -65,5 +86,58 @@ public class InterviewServiceImpl implements InterviewService {
     @Override
     public void deleteInterview(Integer id) {
         interviewMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public ResponseEntity<List<Question>> startInterview(Interview interview, Integer userId, Integer cvId, Integer jobId, String companyName, String position) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("company", companyName);
+        jsonObject.put("position", position);
+        Resume resume = resumeService.getResumeById(cvId);
+        String cvContext = resume.getCvContext();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(cvContext);
+            jsonObject.put("resume_text", jsonNode.get("resume_text").asText());
+            jsonObject.put("extracted_info", jsonNode.get("extracted_info").asText());
+        }
+        catch (Exception e) {
+            logger.info("Failed to extract resume info.", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header("Reason", "Failed to extract resume info.")
+                    .body(null);
+        }
+
+        List<String> questions = webClient.post()
+                .uri("/getAllQuestions")
+                .retrieve()
+                .bodyToFlux(String.class)
+                .collectList().block();
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = dateTime.format(formatter);
+        List<Question> questionList = new ArrayList<>();
+        for (String question : questions) {
+            Question question1 = new Question();
+            question1.setInterviewId(interview.getId());
+            question1.setCreateDate(formattedDateTime);
+            question1.setDescription(question);
+            questionService.createQuestion(question1);
+            questionList.add(question1);
+        }
+
+        return ResponseEntity.ok(questionList);
+    }
+
+    @Override
+    public ResponseEntity getInterviewEvaluation(Interview interview) {
+        webClient.get()
+                .uri("/getInterviewEvaluation")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        return null;
     }
 }

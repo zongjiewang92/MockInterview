@@ -2,6 +2,7 @@ package com.fdu.mockinterview.service;
 
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.entity.Interview;
+import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.entity.Resume;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,8 @@ public interface InterviewService {
     Interview updateInterview(Interview interview);
 
     void deleteInterview(Integer id);
+
+    ResponseEntity<List<Question>> startInterview(Interview interview, Integer userId, Integer cvId, Integer jobId, String companyName, String position);
+
+    ResponseEntity getInterviewEvaluation(Interview interview);
 }

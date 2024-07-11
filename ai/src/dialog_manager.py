@@ -24,6 +24,8 @@ class InterviewerStateMachine:
         self.current_question_index = 0
         self.cadidate_answers = []
         self.llm = OpenAI(api_key=openai.api_key, max_tokens=-1)
+        self.evaluation_result = None
+        self.evaluation_result_audio = None
 
     # state : INIT, WELCOME, ASK_QUESTION, EVALUATE 
     def next_state(self, user_input=None):
@@ -76,8 +78,10 @@ class InterviewerStateMachine:
             """
         )
         chain = LLMChain(prompt=prompt_template_evaluation, llm=self.llm)
-        evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
-        return utils.call_tts_api(evaluation_result, f"../output/R{self.current_question_index}_response.mp3")
+        self.evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
+        # this file name should be whole interview evaluation result?
+        self.evaluation_result_audio = utils.call_tts_api(self.evaluation_result, f"../output/R{self.current_question_index}_response.mp3")
+        return self.evaluation_result_audio
 
 
 def service(interviewSM, candidate_input):
