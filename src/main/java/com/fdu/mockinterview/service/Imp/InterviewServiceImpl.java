@@ -36,6 +36,7 @@ public class InterviewServiceImpl implements InterviewService {
     private InterviewMapper interviewMapper;
     @Resource
     private ResumeService resumeService;  // how to initialize this bean?
+    @Resource
     private QuestionService questionService;  // how to initialize this bean?
     @Resource
     private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
