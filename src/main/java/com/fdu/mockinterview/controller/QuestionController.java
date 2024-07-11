@@ -62,6 +62,10 @@ public class QuestionController {
 
 
     // TODO question answer end -> upload answer media file -> save media file -> call AI do sound transit to text, get AI_score, AI_result -> save answer text to table
+    @PostMapping("/answerQuestion")
+    public ResponseEntity<Result<Question>> answerQuestion(@RequestBody Question question, @RequestBody Answer answer) {
+        return ResponseEntity.ok(ResultBuilder.success(questionService.uploadQuestion(question)));
+    }
 
     // TODO review -> download answer media file, provide to front-end
 
