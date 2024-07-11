@@ -29,7 +29,6 @@ def initialize():
 def next_state():
     data = request.get_json()
     user_input = data.get('user_input', "")
-    state_machine_data = data['state_machine_data']
     interviewSM = pickle.loads(session['interviewSM'])
     interviewSM = dialog_manager.service(interviewSM, candidate_input=user_input)
     session['interviewSM'] = pickle.dumps(interviewSM)
