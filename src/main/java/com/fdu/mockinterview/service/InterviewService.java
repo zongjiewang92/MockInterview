@@ -25,7 +25,7 @@ public interface InterviewService {
 
     Interview getInterviewById(Integer id);
 
-    Interview createInterview(Interview interview);
+    Interview createInterview(Integer userId, Integer cvId, String companyName, String position);
 
     Interview updateInterview(Interview interview);
 

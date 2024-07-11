@@ -73,8 +73,12 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public Interview createInterview(Interview interview) {
-        interviewMapper.insert(interview);
+    public Interview createInterview(Integer userId, Integer cvId, String companyName, String position) {
+        Interview interview = new Interview();
+        interview.setUserId(userId);
+        interview.setCvId(cvId);
+        interview.setCompanyName(companyName);
+        interview.setPosition(position);
         return interviewMapper.selectByPrimaryKey(interview.getId());
     }
 

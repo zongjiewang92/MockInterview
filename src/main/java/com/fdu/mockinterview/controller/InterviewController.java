@@ -50,9 +50,12 @@ public class InterviewController {
     }
 
     @PostMapping("/createInterview")
-    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Interview interview, @RequestBody Integer cvId) {
-        interview.setCvId(cvId);
-        return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(interview)));
+    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Integer userId,
+                                                             @RequestBody Integer cvId,
+                                                             @RequestBody String companyName,
+                                                             @RequestBody String position
+                                                             ) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(userId, cvId, companyName, position)));
     }
 
     @PutMapping("/updateInterview")
