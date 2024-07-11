@@ -90,12 +90,12 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public ResponseEntity<List<Question>> startInterview(Interview interview, Integer userId, Integer cvId, Integer jobId, String companyName, String position) {
+    public ResponseEntity<List<Question>> startInterview(Interview interview) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put("company", companyName);
-        jsonObject.put("position", position);
-        Resume resume = resumeService.getResumeById(cvId);
+        jsonObject.put("company", interview.getCompanyName());
+        jsonObject.put("position", interview.getPosition());
+        Resume resume = resumeService.getResumeById(interview.getCvId());
         String cvContext = resume.getCvContext();
         try {
             JsonNode jsonNode = objectMapper.readTree(cvContext);

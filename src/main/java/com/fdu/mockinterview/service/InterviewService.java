@@ -31,7 +31,7 @@ public interface InterviewService {
 
     void deleteInterview(Integer id);
 
-    ResponseEntity<List<Question>> startInterview(Interview interview, Integer userId, Integer cvId, Integer jobId, String companyName, String position);
+    ResponseEntity<List<Question>> startInterview(Interview interview);
 
     ResponseEntity getInterviewEvaluation(Interview interview);
 }

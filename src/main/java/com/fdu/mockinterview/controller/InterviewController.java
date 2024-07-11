@@ -50,7 +50,8 @@ public class InterviewController {
     }
 
     @PostMapping("/createInterview")
-    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Interview interview) {
+    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Interview interview, @RequestBody Integer cvId) {
+        interview.setCvId(cvId);
         return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(interview)));
     }
 
@@ -68,13 +69,8 @@ public class InterviewController {
 
     // Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
     @PostMapping("/startInterview")
-    public ResponseEntity<List<Question>> startInterview(@RequestBody Interview interview,
-                                                         @RequestParam Integer userId,
-                                                         @RequestParam Integer cvId,
-                                                         @RequestParam Integer jobId,
-                                                         @RequestParam String companyName,
-                                                         @RequestParam String position) {
-        return interviewService.startInterview(interview, userId, cvId, jobId, companyName, position);
+    public ResponseEntity<List<Question>> startInterview(@RequestBody Interview interview) {
+        return interviewService.startInterview(interview);
     }
 
     // Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
