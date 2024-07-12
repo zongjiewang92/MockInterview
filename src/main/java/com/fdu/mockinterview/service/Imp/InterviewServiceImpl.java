@@ -16,8 +16,10 @@ import com.fdu.mockinterview.service.WebClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -79,6 +81,8 @@ public class InterviewServiceImpl implements InterviewService {
         interview.setCvId(cvId);
         interview.setCompanyName(companyName);
         interview.setPosition(position);
+
+        interviewMapper.insert(interview);
         return interviewMapper.selectByPrimaryKey(interview.getId());
     }
 
@@ -104,7 +108,7 @@ public class InterviewServiceImpl implements InterviewService {
         try {
             JsonNode jsonNode = objectMapper.readTree(cvContext);
             jsonObject.put("resume_text", jsonNode.get("resume_text").asText());
-            jsonObject.put("extracted_info", jsonNode.get("extracted_info").asText());
+            jsonObject.put("extracted_info", jsonNode.get("extracted_info"));
         }
         catch (Exception e) {
             logger.info("Failed to extract resume info.", e);
@@ -113,7 +117,19 @@ public class InterviewServiceImpl implements InterviewService {
                     .body(null);
         }
 
-        List<String> questions = webClientService.getWebClient().post()
+        String initMsg = webClientService.getWebClient().post()
+                .uri("/initialize")
+                .bodyValue(jsonObject)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response -> {
+                    // 打印返回码
+                    System.err.println("Error response code: " + response.statusCode());
+                    return Mono.error(new RuntimeException("HTTP " + response.statusCode()));
+                })
+                .bodyToMono(String.class)
+                .block();
+
+        List<String> questions = webClientService.getWebClient().get()
                 .uri("/getAllQuestions")
                 .retrieve()
                 .bodyToFlux(String.class)

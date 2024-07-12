@@ -118,7 +118,7 @@ public class ResumeServiceImpl implements ResumeService {
 //            String cvContext = ai.getCvContext(file);
 //            resume.setCvContext();
             String jsonResponse = webClientService.getWebClient().get()
-                    .uri("/parseResumeFile?file_path=" + Paths.get(resume.getCvDirectory()).resolve(resume.getCvName()).normalize())
+                    .uri("/parseResumeFile?file_path=" + Paths.get(resume.getCvDirectory()).resolve(resume.getCvName()).toAbsolutePath().normalize())
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
