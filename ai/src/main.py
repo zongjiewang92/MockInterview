@@ -8,7 +8,7 @@ openai.api_key = constant.jyOpenAIKey
 # Define Variables
 company = "Tech Innovations Inc."
 position = "Machine Learning Engineer"
-file_path = "../data/JingyaoZhang_MLE.pdf"
+file_path = "../data/resume1.pdf"
 
 # parse resume file to text.
 summary_info, resume_text, extracted_info = utils.parse_resume_file(file_path)
