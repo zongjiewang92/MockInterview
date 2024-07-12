@@ -81,7 +81,9 @@ public class InterviewController {
     // so there only need to get the interview result
     @PostMapping("/getInterviewEvaluation")
     public ResponseEntity<Result<Interview>> getInterviewEvaluation(@RequestBody Interview interview) {
+
         return ResponseEntity.ok(ResultBuilder.success(interviewService.getInterviewEvaluation(interview)));
+
     }
 
 }

@@ -136,13 +136,13 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public ResponseEntity getInterviewEvaluation(Interview interview) {
+    public Interview getInterviewEvaluation(Interview interview) {
         webClient.get()
                 .uri("/getInterviewEvaluation")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        return null;
+        return interview;
     }
 }

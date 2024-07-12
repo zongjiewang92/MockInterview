@@ -3,12 +3,10 @@ package com.fdu.mockinterview.service;
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.entity.Question;
-import com.fdu.mockinterview.entity.Resume;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 
@@ -33,5 +31,5 @@ public interface InterviewService {
 
     ResponseEntity<List<Question>> startInterview(Interview interview);
 
-    ResponseEntity getInterviewEvaluation(Interview interview);
+    Interview getInterviewEvaluation(Interview interview);
 }
