@@ -26,7 +26,7 @@ class InterviewerStateMachine:
         self.llm = OpenAI(api_key=openai.api_key, max_tokens=-1)
 
     # state : INIT, WELCOME, ASK_QUESTION, EVALUATE 
-    def next_state(self, user_input=None)
+    def next_state(self, user_input=None):
         if self.state == 'INIT':
             # print(f'Current state {self.state}')
             self.state = 'ASK_QUESTION'
