@@ -4,6 +4,7 @@ import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.common.Result;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
+import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.service.InterviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +50,12 @@ public class InterviewController {
     }
 
     @PostMapping("/createInterview")
-    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Interview interview) {
-        return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(interview)));
+    public ResponseEntity<Result<Interview>> createInterview(@RequestBody Integer userId,
+                                                             @RequestBody Integer cvId,
+                                                             @RequestBody String companyName,
+                                                             @RequestBody String position
+                                                             ) {
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.createInterview(userId, cvId, companyName, position)));
     }
 
     @PutMapping("/updateInterview")
@@ -65,10 +70,20 @@ public class InterviewController {
     }
 
 
-    // TODO Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
+    // Mock interview start api -> call AI -> get questions(update table question, return questions to front-end)
+    @PostMapping("/startInterview")
+    public ResponseEntity<List<Question>> startInterview(@RequestBody Interview interview) {
+        return interviewService.startInterview(interview);
+    }
 
+    // Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
+    // Actually there is no endInterview, the interview result will be available after last question answered
+    // so there only need to get the interview result
+    @PostMapping("/getInterviewEvaluation")
+    public ResponseEntity<Result<Interview>> getInterviewEvaluation(@RequestBody Interview interview) {
 
-    // TODO Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
+        return ResponseEntity.ok(ResultBuilder.success(interviewService.getInterviewEvaluation(interview)));
 
+    }
 
 }

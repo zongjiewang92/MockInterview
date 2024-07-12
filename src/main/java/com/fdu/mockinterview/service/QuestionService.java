@@ -2,7 +2,10 @@ package com.fdu.mockinterview.service;
 
 import com.fdu.mockinterview.entity.Question;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,4 +26,8 @@ public interface QuestionService {
     void deleteQuestion(Integer id);
 
     long countQuestionByUserId(int interviewId);
+    String uploadAnswerFile(MultipartFile file, Integer questionsId);
+    ResponseEntity<Resource> downloadAnswerFile(Integer resumeId);
+
+    ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId);
 }

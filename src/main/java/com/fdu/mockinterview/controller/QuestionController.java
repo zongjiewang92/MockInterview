@@ -1,16 +1,24 @@
 package com.fdu.mockinterview.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.common.Result;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.service.QuestionService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -61,9 +69,23 @@ public class QuestionController {
     }
 
 
-    // TODO question answer end -> upload answer media file -> save media file -> call AI do sound transit to text, get AI_score, AI_result -> save answer text to table
+    // question answer end -> upload answer media file -> save media file -> call AI do sound transit to text, get AI_score, AI_result -> save answer text to table
+    @PostMapping("/answerQuestion")
+    public ResponseEntity<String> answerQuestion(@RequestBody Integer questionId,
+                                                 @RequestPart(name = "answerAudio") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The answer audio is empty.");
+        }
 
-    // TODO review -> download answer media file, provide to front-end
+        return questionService.answerQuestion(file, questionId);
+    }
 
+    // review -> download answer media file, provide to front-end
+    @GetMapping("/download/{questionId:.+}")
+    @Operation(summary = "Download an answer audio file")
+    public ResponseEntity<org.springframework.core.io.Resource> downloadAnswer(@PathVariable Integer questionId) {
+
+        return questionService.downloadAnswerFile(questionId);
+    }
 
 }

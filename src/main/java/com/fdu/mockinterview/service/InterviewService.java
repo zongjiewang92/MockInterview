@@ -2,12 +2,11 @@ package com.fdu.mockinterview.service;
 
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.entity.Interview;
-import com.fdu.mockinterview.entity.Resume;
+import com.fdu.mockinterview.entity.Question;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 
@@ -24,9 +23,13 @@ public interface InterviewService {
 
     Interview getInterviewById(Integer id);
 
-    Interview createInterview(Interview interview);
+    Interview createInterview(Integer userId, Integer cvId, String companyName, String position);
 
     Interview updateInterview(Interview interview);
 
     void deleteInterview(Integer id);
+
+    ResponseEntity<List<Question>> startInterview(Interview interview);
+
+    Interview getInterviewEvaluation(Interview interview);
 }

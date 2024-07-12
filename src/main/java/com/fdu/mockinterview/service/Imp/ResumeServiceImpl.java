@@ -5,6 +5,7 @@ import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.ResumeMapper;
 import com.fdu.mockinterview.service.ResumeService;
+import com.fdu.mockinterview.service.WebClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.UrlResource;
@@ -33,6 +34,8 @@ public class ResumeServiceImpl implements ResumeService {
     private static final String DIR_SPLITER = "/";
 
 
+    @Resource
+    private WebClientService webClientService;  // this.webClient = WebClient.create("http://localhost:5000");
 
     @Resource
     private ResumeMapper resumeMapper;
@@ -112,9 +115,14 @@ public class ResumeServiceImpl implements ResumeService {
             resume.setCvName(originalFilename);
             resume.setCvType(fileType);
 
-//            TODO  call ai api get cv_context
 //            String cvContext = ai.getCvContext(file);
 //            resume.setCvContext();
+            String jsonResponse = webClientService.getWebClient().get()
+                    .uri("/parseResumeFile?file_path=" + Paths.get(resume.getCvDirectory()).resolve(resume.getCvName()).normalize())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            resume.setCvContext(jsonResponse);
 
             resumeMapper.updateByPrimaryKey(resume);
 
