@@ -3,10 +3,9 @@ package com.fdu.mockinterview.service.Imp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fdu.mockinterview.entity.Question;
-import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.QuestionMapper;
 import com.fdu.mockinterview.service.QuestionService;
-import com.fdu.mockinterview.service.ResumeService;
+import com.fdu.mockinterview.service.WebClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.UrlResource;
@@ -16,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -36,7 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Resource
     private QuestionMapper questionMapper;
     @Resource
-    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
+    private WebClientService webClientService;
 
     @Override
     public List<Question> getAllQuestions() {
@@ -145,7 +143,7 @@ public class QuestionServiceImpl implements QuestionService {
         jsonObject.put("user_input", filePathName);
 
         // call AI service and return result
-        return webClient.post()
+        return webClientService.getWebClient().post()
                 .uri("/service")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(jsonObject)

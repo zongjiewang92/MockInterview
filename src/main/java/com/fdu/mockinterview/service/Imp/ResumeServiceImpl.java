@@ -5,6 +5,7 @@ import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Resume;
 import com.fdu.mockinterview.mapper.ResumeMapper;
 import com.fdu.mockinterview.service.ResumeService;
+import com.fdu.mockinterview.service.WebClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.UrlResource;
@@ -14,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 
 @Service("resumeService")
@@ -36,7 +35,7 @@ public class ResumeServiceImpl implements ResumeService {
 
 
     @Resource
-    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
+    private WebClientService webClientService;  // this.webClient = WebClient.create("http://localhost:5000");
 
     @Resource
     private ResumeMapper resumeMapper;
@@ -118,7 +117,7 @@ public class ResumeServiceImpl implements ResumeService {
 
 //            String cvContext = ai.getCvContext(file);
 //            resume.setCvContext();
-            String jsonResponse = webClient.get()
+            String jsonResponse = webClientService.getWebClient().get()
                     .uri("/parseResumeFile?file_path=" + Paths.get(resume.getCvDirectory()).resolve(resume.getCvName()).normalize())
                     .retrieve()
                     .bodyToMono(String.class)

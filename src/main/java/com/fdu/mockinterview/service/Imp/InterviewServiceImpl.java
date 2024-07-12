@@ -12,20 +12,18 @@ import com.fdu.mockinterview.mapper.InterviewMapper;
 import com.fdu.mockinterview.service.InterviewService;
 import com.fdu.mockinterview.service.QuestionService;
 import com.fdu.mockinterview.service.ResumeService;
+import com.fdu.mockinterview.service.WebClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @Service("interviewService")
@@ -39,11 +37,9 @@ public class InterviewServiceImpl implements InterviewService {
     @Resource
     private QuestionService questionService;
 
-    private WebClient webClient;
+    @Resource
+    private WebClientService webClientService;
 
-    public InterviewServiceImpl(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:5000").build();
-    }
 
     @Override
     public List<Interview> getAllInterviews() {
@@ -117,7 +113,7 @@ public class InterviewServiceImpl implements InterviewService {
                     .body(null);
         }
 
-        List<String> questions = webClient.post()
+        List<String> questions = webClientService.getWebClient().post()
                 .uri("/getAllQuestions")
                 .retrieve()
                 .bodyToFlux(String.class)
@@ -141,7 +137,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public Interview getInterviewEvaluation(Interview interview) {
-        webClient.get()
+        webClientService.getWebClient().get()
                 .uri("/getInterviewEvaluation")
                 .retrieve()
                 .bodyToMono(String.class)
