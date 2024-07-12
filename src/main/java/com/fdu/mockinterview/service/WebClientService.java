@@ -7,9 +7,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service("webClientService")
 public class WebClientService {
 
-    private WebClient webClient = WebClient.create("http://localhost:5000");
+    private static final WebClient webClient = WebClient.create("http://localhost:5000");
 
     public WebClient getWebClient() {
         return webClient;
     }
+
 }
