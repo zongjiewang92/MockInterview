@@ -35,11 +35,15 @@ public class InterviewServiceImpl implements InterviewService {
     @Resource
     private InterviewMapper interviewMapper;
     @Resource
-    private ResumeService resumeService;  // how to initialize this bean?
+    private ResumeService resumeService;
     @Resource
-    private QuestionService questionService;  // how to initialize this bean?
-    @Resource
-    private WebClient webClient;  // this.webClient = WebClient.create("http://localhost:5000");
+    private QuestionService questionService;
+
+    private WebClient webClient;
+
+    public InterviewServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl("http://localhost:5000").build();
+    }
 
     @Override
     public List<Interview> getAllInterviews() {
