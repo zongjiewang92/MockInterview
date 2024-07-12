@@ -1,12 +1,18 @@
+
 import openai
-import constant
 from pathlib import Path
 from langchain.chains import LLMChain
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
+import os
+from dotenv import load_dotenv
+load_dotenv()
+MyOpenaiKey = os.getenv("MyOpenaiKey")
+
 
 def extract_info(text):
+    # print(text)  # To check the input at the beginning
     prompt_template = PromptTemplate(
         input_variables=["resume_text"],
         template="""
@@ -24,11 +30,12 @@ def extract_info(text):
         'Work Experience: [Work Experience Details Here]'
         """.format(resume_text=text)
     )
+
     llm = OpenAI(api_key=openai.api_key)
     chain = LLMChain(prompt=prompt_template, llm=llm)
     result = chain.run({"resume_text": text})
-
     output = result.strip() if isinstance(result, str) else result.get('output', '').strip()
+
     lines = output.split('\n')
 
     extracted_info = {}
@@ -62,21 +69,25 @@ def parse_resume_file(file_path):
     documents = loader.load()
     resume_text = " ".join([doc.page_content for doc in documents])
     summary_info, extracted_info = extract_info(resume_text)
+
     return summary_info, resume_text, extracted_info
 
 
 def call_asr_api(audio_path):
-    client = openai.OpenAI(api_key=constant.jyOpenAIKey)
+    client = openai.OpenAI(api_key=MyOpenaiKey)
     audio_file= open(audio_path, "rb")
     transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file, language="en")
-    print(f"Candidate audio asr result:{transcription.text}")
     return transcription.text
 
 
 def call_tts_api(text, audio_path):
-    client = openai.OpenAI(api_key=constant.jyOpenAIKey)
+    client = openai.OpenAI(api_key=MyOpenaiKey)
     speech_file_path = Path(audio_path)
     response = client.audio.speech.create(model="tts-1", voice="alloy", input=text)
+
     response.stream_to_file(speech_file_path)
-    print(f"AI response: {text}")
+    
     return audio_path
+
+
+
