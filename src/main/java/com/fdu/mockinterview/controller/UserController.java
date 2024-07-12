@@ -57,9 +57,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody User user) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPasswd()));
-        String token = JwtHelper.generateToken(user.getUserName());
+        User user1 = userService.getUserByUserName(user.getUserName());
+        String token = JwtHelper.generateToken(user1.getUserName());
 
-        return ResponseEntity.ok(new LoginResponse(user.getUserName(), token));
+        return ResponseEntity.ok(new LoginResponse(user1.getUserName(), user1.getId(), token));
     }
 
     @PutMapping("/updateUser")

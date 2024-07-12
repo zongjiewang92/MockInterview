@@ -13,7 +13,7 @@ class InterviewerStateMachine:
         self.position = position
         self.resume_text = resume_text
         self.extrcted_info = extracted_info
-        self.cadidate_name = extracted_info['Name']
+        self.candidate_name = extracted_info['Name']
         self.questions = [
             f"Hi {self.candidate_name}, welcome to {company}, Could you please introduce yourself?",
             f"Why do you want to join {company}?",

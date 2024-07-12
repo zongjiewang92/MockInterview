@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = 'secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
+interviewSMMap = {}
 
 
 @app.route('/parseResumeFile', methods=['GET'])
@@ -25,13 +26,13 @@ def initialize():
     resume_text = data['resume_text']
     extracted_info = data['extracted_info']
     interviewSM = dialog_manager.InterviewerStateMachine(company, position, resume_text, extracted_info)
-    session['interviewSM'] = pickle.dumps(interviewSM)
+    interviewSMMap[session.sid] = interviewSM
     return jsonify({"message": "State Machine Initialized"}), 200
 
 
 @app.route('/getAllQuestions', methods=['GET'])
 def get_all_questions():
-    interviewSM = pickle.loads(session['interviewSM'])
+    interviewSM = interviewSMMap[session.sid]
     return jsonify({"questions": interviewSM.questions}), 200
 
 

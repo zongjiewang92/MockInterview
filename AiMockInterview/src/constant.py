@@ -1,1 +1,0 @@
-MyOpenaiKey = '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'
