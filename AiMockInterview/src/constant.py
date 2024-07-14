@@ -1,1 +1,1 @@
-jyOpenAIKey=''
+jyOpenAIKey='sk-proj-H6azVjFjCvzo3pUHd7KeT3BlbkFJqmsd9BY5taz0SOyO3VR7'
