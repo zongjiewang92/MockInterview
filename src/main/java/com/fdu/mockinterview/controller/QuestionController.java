@@ -79,14 +79,15 @@ public class QuestionController {
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     @PostMapping(value = "/answerQuestion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> answerQuestion(@RequestPart(name = "file") MultipartFile file,
-                                                 @RequestParam Integer questionId
+    public ResponseEntity<Result<Question>> answerQuestion(@RequestPart(name = "file") MultipartFile file,
+                                                           @RequestParam Integer questionId,
+                                                           @RequestParam Integer nextQuestionId
                                                  ) {
         if (file.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The answer audio is empty.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        return questionService.answerQuestion(file, questionId);
+        return questionService.answerQuestion(file, questionId, nextQuestionId);
     }
 
     // review -> download answer media file, provide to front-end

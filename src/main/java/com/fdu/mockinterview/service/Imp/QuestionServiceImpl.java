@@ -3,13 +3,19 @@ package com.fdu.mockinterview.service.Imp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fdu.mockinterview.common.Constant;
+import com.fdu.mockinterview.common.Result;
+import com.fdu.mockinterview.common.ResultBuilder;
+import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.entity.Question;
+import com.fdu.mockinterview.mapper.InterviewMapper;
 import com.fdu.mockinterview.mapper.QuestionMapper;
+import com.fdu.mockinterview.service.InterviewService;
 import com.fdu.mockinterview.service.QuestionService;
 import com.fdu.mockinterview.service.WebClientService;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,7 +26,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service("questionService")
@@ -35,6 +45,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Resource
     private WebClientService webClientService;
 
+    @Resource
+    private InterviewMapper interviewMapper;
+
     @Override
     public List<Question> getAllQuestions() {
         return questionMapper.selectAll();
@@ -45,6 +58,7 @@ public class QuestionServiceImpl implements QuestionService {
         int offset = (pageNum - 1) * pageSize;
         return questionMapper.selectQuestionByInterviewIdPages(offset, pageSize, interviewId);
     }
+
     @Override
     public Question getQuestionById(Integer id) {
         return questionMapper.selectByPrimaryKey(id);
@@ -135,11 +149,16 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId) {
+    public void deleteQuestionsByInterviewId(Integer id) {
+        questionMapper.deleteByInterviewId(id);
+    }
+
+    @Override
+    public ResponseEntity<Result<Question>> answerQuestion(MultipartFile file, Integer questionId, Integer nextQuestionId) {
 
         Question question = questionMapper.selectByPrimaryKey(questionId);
 
-        if (question==null){
+        if (question == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
@@ -151,31 +170,90 @@ public class QuestionServiceImpl implements QuestionService {
         jsonObject.put(Constant.INTERVIEW_ID, question.getInterviewId());
 
         // call AI service and return result
-        ResponseEntity<String> responseEntity = webClientService.getWebClient().post()
+        Map<String, String> responseEntity = webClientService.getWebClient().post()
                 .uri("/service")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(jsonObject)
                 .retrieve()
-                .toEntity(String.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
+                })
                 .block();
 
 
         if (responseEntity != null) {
-            HttpStatusCode statusCode = responseEntity.getStatusCode();
-            String responseBody = responseEntity.getBody();
 
-            if (statusCode.is2xxSuccessful()) {
-                System.out.println("Success! Status Code: " + statusCode);
-                System.out.println("Response Body: " + responseBody);
-                return ResponseEntity.ok("Success!");
+            String answer = responseEntity.get(Constant.candidate_current_answers);
 
+            question.setAnswerContext(answer);
+            questionMapper.updateByPrimaryKey(question);
+
+            String responseAudioPath = responseEntity.get(Constant.audio_response_path);
+            Path path = Paths.get(responseAudioPath);
+            Path normalizedPath = path.normalize();
+            String normalizedString = normalizedPath.toString();
+
+            if (nextQuestionId > 0) {
+                Question nextQuestion = questionMapper.selectByPrimaryKey(nextQuestionId);
+                nextQuestion.setQuestionDirectory(normalizedString);
+                questionMapper.updateByPrimaryKey(nextQuestion);
+                return ResponseEntity.ok(ResultBuilder.success(nextQuestion));
             } else {
-                System.err.println("Error! Status Code: " + statusCode);
-                System.err.println("Response Body: " + responseBody);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ai service api error!");
+                // save report path into interview_directory
+
+                Map<String, String> input = new HashMap<>();
+                input.put(Constant.INTERVIEW_ID, question.getInterviewId().toString());
+
+                Map<String, String> responseMap = webClientService.getWebClient().post()
+                        .uri("/getInterviewEvaluation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(input)
+                        .retrieve()
+                        .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
+                        })
+                        .block();
+
+                if (responseMap != null) {
+
+                    String report = responseMap.get(Constant.evaluation_result);
+
+                    String regex = "Score:.*(\\d+/\\d+)";
+
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(report);
+
+                    Interview interview = interviewMapper.selectByPrimaryKey(question.getInterviewId());
+
+
+                    if (matcher.find()) {
+                        String scoreStr = matcher.group(1);
+                        String[] parts = scoreStr.split("/");
+                        int numerator = Integer.parseInt(parts[0]);
+                        int denominator = Integer.parseInt(parts[1]);
+
+                        float result = (float) numerator / denominator;
+
+                        float roundedResult = Math.round(result * 100.0) / 100.0f;
+                        interview.setAiScore(String.valueOf(roundedResult));
+
+                    } else {
+                        System.out.println("Score not found in the text.");
+                    }
+
+
+                    interview.setReport(report);
+                    interview.setReportDirectory(normalizedString);
+
+                    interviewMapper.updateByPrimaryKey(interview);
+
+                    Constant.sessionMap.remove(interview.getId().toString());
+
+                }
             }
+
+            return ResponseEntity.ok(ResultBuilder.success(question));
+
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ai service api error!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }

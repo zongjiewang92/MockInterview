@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -100,7 +102,11 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public ResponseEntity<List<Question>> startInterview(Interview interview) {
+    public ResponseEntity<List<Question>> startInterview(Interview interviewInput) {
+
+        questionService.deleteQuestionsByInterviewId(interviewInput.getId());
+
+        Interview interview = interviewMapper.selectByPrimaryKey(interviewInput.getId());
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
@@ -126,7 +132,7 @@ public class InterviewServiceImpl implements InterviewService {
                     .body(null);
         }
 
-        ResponseEntity<String> responseEntity = webClientService.getWebClient().post()
+        String firstQuestionPath = webClientService.getWebClient().post()
                 .uri("/initialize")
                 .bodyValue(jsonObject)
                 .retrieve()
@@ -135,8 +141,14 @@ public class InterviewServiceImpl implements InterviewService {
                     System.err.println("Error response code: " + response.statusCode());
                     return Mono.error(new RuntimeException("HTTP " + response.statusCode()));
                 })
-                .toEntity(String.class)
+                .bodyToMono(String.class)
                 .block();
+
+        assert firstQuestionPath != null;
+        firstQuestionPath = firstQuestionPath.substring(1, firstQuestionPath.lastIndexOf("\""));
+        Path path = Paths.get(firstQuestionPath);
+        Path normalizedPath = path.normalize();
+        String normalizedString = normalizedPath.toString();
 
 
         List<String> questions = webClientService.getWebClient().post()
@@ -180,6 +192,9 @@ public class InterviewServiceImpl implements InterviewService {
             Question question = new Question();
             question.setInterviewId(interview.getId());
             question.setNumber(number);
+            if (number==1){
+                question.setQuestionDirectory(normalizedString);
+            }
             question.setDescription(desc);
             questionService.createQuestion(question);
             questionList.add(question);

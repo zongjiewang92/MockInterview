@@ -73,14 +73,6 @@ public class InterviewController {
         return interviewService.startInterview(interview);
     }
 
-    // Mock interview end api -> call AI -> get report, score -> update interview table -> return to front-end
-    // Actually there is no endInterview, the interview result will be available after last question answered
-    // so there only need to get the interview result
-    @PostMapping("/getInterviewEvaluation")
-    public ResponseEntity<Result<Interview>> getInterviewEvaluation(@RequestBody Interview interview) {
 
-        return ResponseEntity.ok(ResultBuilder.success(interviewService.getInterviewEvaluation(interview)));
-
-    }
 
 }

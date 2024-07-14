@@ -5,6 +5,9 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 import os
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.relpath(os.path.join(CURRENT_DIR, '..', '..'))
+
 
 class InterviewerStateMachine:
     # Constructor : __init__
@@ -29,6 +32,7 @@ class InterviewerStateMachine:
         self.llm = OpenAI(api_key=openai.api_key, max_tokens=-1)
         self.evaluation_result = None
         self.evaluation_result_audio = None
+        self.file_path = ""
 
     # state : INIT, WELCOME, ASK_QUESTION, EVALUATE 
     def next_state(self, user_input=None):
@@ -62,9 +66,9 @@ class InterviewerStateMachine:
         question = self.questions[self.current_question_index]
         response_text = question
 
-        file_path = self.check_path()
+        self.file_path = self.check_path()
 
-        return utils.call_tts_api(response_text, file_path)
+        return utils.call_tts_api(response_text, self.file_path)
 
     def _evaluate(self):
         answers = "\n".join([f"Q: {self.questions[i]}\nA: {answer}" for i, answer in enumerate(self.candidate_answers)])
@@ -87,25 +91,28 @@ class InterviewerStateMachine:
         self.evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
         # this file name should be whole interview evaluation result?
 
-        file_path = self.check_path()
+        self.file_path = self.check_path()
 
-        self.evaluation_result_audio = utils.call_tts_api(self.evaluation_result, file_path)
+        self.evaluation_result_audio = utils.call_tts_api(self.evaluation_result, self.file_path)
 
         return self.evaluation_result_audio
 
     def check_path(self):
-        file_path = f"../output/R{self.interview_id}/R{self.current_question_index}_response.mp3"
-        directory = os.path.dirname(file_path)
+
+        self.file_path = os.path.join(PARENT_DIR,
+                                      f"uploads/questions/{self.interview_id}/output/R{self.current_question_index}_response.mp3")
+
+        directory = os.path.dirname(self.file_path)
+
         if not os.path.exists(directory):
             os.makedirs(directory)
-
-        if not os.path.exists(file_path):
-            with open(file_path, 'wb') as f:
-                pass
-            print(f"File created: {file_path}")
         else:
-            print(f"File already exists: {file_path}")
-        return file_path
+            if os.path.exists(self.file_path):
+                os.remove(self.file_path)
+
+        open(self.file_path, 'a').close()
+
+        return self.file_path
 
 
 def service(interview_sm, candidate_input):
@@ -123,7 +130,7 @@ def service(interview_sm, candidate_input):
 
     # Send audio_response_path to backend
     print(f"AI respones are store in : {audio_response_path}")
-    return interview_sm
+    return interview_sm, audio_response_path
 
 
 # if run this file directly : Ture (__name__ เป็นตัวแปรพิเศษใน Python ที่จะมีค่าเป็น "__main__" เมื่อไฟล์นั้นถูกรันโดยตรง แต่ถ้าRunจากไฟล์อื่น จะมีค่าเป็นชื่อของไฟล์ที่ import เข้ามา)

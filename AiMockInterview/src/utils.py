@@ -6,6 +6,7 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 
+
 def extract_info(text):
     prompt_template = PromptTemplate(
         input_variables=["resume_text"],
@@ -41,7 +42,7 @@ def extract_info(text):
                 extracted_info["Education"] = line.split("Education: ")[1].strip()
             except IndexError:
                 print("Error parsing Work Experience. Check formatting.")
-                extracted_info["Work Experience"] = "Error parsing. Check data."                
+                extracted_info["Work Experience"] = "Error parsing. Check data."
         elif "Work Experience:" in line:
             try:
                 extracted_info["Work Experience"] = line.split("Work Experience: ")[1].strip()
@@ -67,7 +68,7 @@ def parse_resume_file(file_path):
 
 def call_asr_api(audio_path):
     client = openai.OpenAI(api_key=constant.jyOpenAIKey)
-    audio_file= open(audio_path, "rb")
+    audio_file = open(audio_path, "rb")
     transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file, language="en")
     print(f"Candidate audio asr result:{transcription.text}")
     return transcription.text
