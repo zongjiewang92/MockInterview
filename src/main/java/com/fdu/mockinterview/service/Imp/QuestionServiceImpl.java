@@ -2,17 +2,16 @@ package com.fdu.mockinterview.service.Imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fdu.mockinterview.common.Constant;
 import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.mapper.QuestionMapper;
 import com.fdu.mockinterview.service.QuestionService;
 import com.fdu.mockinterview.service.WebClientService;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,22 +73,23 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public String uploadAnswerFile(MultipartFile file, Integer questionsId) {
+    public String uploadAnswerFile(MultipartFile file, Question question) {
         try {
 
+            Integer questionsId = question.getId();
+            Integer interviewId = question.getInterviewId();
             String originalFilename = file.getOriginalFilename();
 
             // Save file to the specified directory
             byte[] bytes = file.getBytes();
 
-            Path uploadPath = Paths.get(UPLOAD_RESUME_DIR + questionsId + DIR_SPLITER);
+            Path uploadPath = Paths.get(UPLOAD_RESUME_DIR + interviewId + DIR_SPLITER + questionsId + DIR_SPLITER);
 
             // create path
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
 
-            Question question = questionMapper.selectByPrimaryKey(questionsId);
             question.setAnswerDirectory(uploadPath.toString());
 
             assert originalFilename != null;
@@ -136,19 +136,46 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId) {
+
+        Question question = questionMapper.selectByPrimaryKey(questionId);
+
+        if (question==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
         // upload answer media file
-        String filePathName = uploadAnswerFile(file, questionId);
+        String filePathName = uploadAnswerFile(file, question);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put("user_input", filePathName);
+        jsonObject.put(Constant.INTERVIEW_ID, question.getInterviewId());
 
         // call AI service and return result
-        return webClientService.getWebClient().post()
+        ResponseEntity<String> responseEntity = webClientService.getWebClient().post()
                 .uri("/service")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(jsonObject)
                 .retrieve()
                 .toEntity(String.class)
                 .block();
+
+
+        if (responseEntity != null) {
+            HttpStatusCode statusCode = responseEntity.getStatusCode();
+            String responseBody = responseEntity.getBody();
+
+            if (statusCode.is2xxSuccessful()) {
+                System.out.println("Success! Status Code: " + statusCode);
+                System.out.println("Response Body: " + responseBody);
+                return ResponseEntity.ok("Success!");
+
+            } else {
+                System.err.println("Error! Status Code: " + statusCode);
+                System.err.println("Response Body: " + responseBody);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ai service api error!");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ai service api error!");
+        }
     }
 }

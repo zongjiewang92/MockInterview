@@ -26,7 +26,7 @@ public interface QuestionService {
     void deleteQuestion(Integer id);
 
     long countQuestionByUserId(int interviewId);
-    String uploadAnswerFile(MultipartFile file, Integer questionsId);
+    String uploadAnswerFile(MultipartFile file, Question question);
     ResponseEntity<Resource> downloadAnswerFile(Integer resumeId);
 
     ResponseEntity<String> answerQuestion(MultipartFile file, Integer questionId);
