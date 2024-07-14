@@ -8,6 +8,8 @@ import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Question;
 import com.fdu.mockinterview.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,15 +71,23 @@ public class QuestionController {
     }
 
 
+
     // question answer end -> upload answer media file -> save media file -> call AI do sound transit to text, get AI_score, AI_result -> save answer text to table
-    @PostMapping("/answerQuestion")
-    public ResponseEntity<String> answerQuestion(@RequestBody Integer questionId,
-                                                 @RequestPart(name = "answerAudio") MultipartFile file) {
+    @Operation(summary = "Upload a file")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "File uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    @PostMapping(value = "/answerQuestion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Result<Question>> answerQuestion(@RequestPart(name = "file") MultipartFile file,
+                                                           @RequestParam Integer questionId,
+                                                           @RequestParam Integer nextQuestionId
+                                                 ) {
         if (file.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The answer audio is empty.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        return questionService.answerQuestion(file, questionId);
+        return questionService.answerQuestion(file, questionId, nextQuestionId);
     }
 
     // review -> download answer media file, provide to front-end

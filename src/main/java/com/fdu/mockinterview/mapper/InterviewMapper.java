@@ -1,6 +1,7 @@
 package com.fdu.mockinterview.mapper;
 
 import com.fdu.mockinterview.entity.Interview;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.*;
@@ -14,8 +15,8 @@ public interface InterviewMapper {
      * @mbg.generated Sat Jun 08 14:06:23 PDT 2024
      */
     @Delete({
-        "delete from interview",
-        "where id = #{id,jdbcType=INTEGER}"
+            "delete from interview",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     int deleteByPrimaryKey(Integer id);
 
@@ -26,14 +27,14 @@ public interface InterviewMapper {
      * @mbg.generated Sat Jun 08 14:06:23 PDT 2024
      */
     @Insert({
-        "insert into interview (user_id, ",
-        "cv_id, ai_score, ai_result, ",
-        "report, company_name, ",
-        "position) ",
-        "values (#{userId,jdbcType=INTEGER}, ",
-        "#{cvId,jdbcType=INTEGER}, #{aiScore,jdbcType=VARCHAR}, #{aiResult,jdbcType=VARCHAR}, ",
-        "#{report,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, ",
-        "#{position,jdbcType=VARCHAR})"
+            "insert into interview (user_id, ",
+            "cv_id, ai_score, ai_result, ",
+            "report, company_name, ",
+            "position, report_directory ) ",
+            "values (#{userId,jdbcType=INTEGER}, ",
+            "#{cvId,jdbcType=INTEGER}, #{aiScore,jdbcType=VARCHAR}, #{aiResult,jdbcType=VARCHAR}, ",
+            "#{report,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, ",
+            "#{position,jdbcType=VARCHAR}, #{reportDirectory,jdbcType=VARCHAR})"
     })
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Interview record);
@@ -45,23 +46,24 @@ public interface InterviewMapper {
      * @mbg.generated Sat Jun 08 14:06:23 PDT 2024
      */
     @Select({
-        "select",
-        "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
-        "update_date",
-        "from interview",
-        "where id = #{id,jdbcType=INTEGER}"
+            "select",
+            "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
+            "update_date, report_directory",
+            "from interview",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
-        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER),
-        @Result(column="cv_id", property="cvId", jdbcType=JdbcType.INTEGER),
-        @Result(column="ai_score", property="aiScore", jdbcType=JdbcType.VARCHAR),
-        @Result(column="ai_result", property="aiResult", jdbcType=JdbcType.VARCHAR),
-        @Result(column="report", property="report", jdbcType=JdbcType.VARCHAR),
-        @Result(column="company_name", property="companyName", jdbcType=JdbcType.VARCHAR),
-        @Result(column="position", property="position", jdbcType=JdbcType.VARCHAR),
-        @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "cv_id", property = "cvId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "ai_score", property = "aiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ai_result", property = "aiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report", property = "report", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "company_name", property = "companyName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "position", property = "position", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report_directory", property = "reportDirectory", jdbcType = JdbcType.VARCHAR)
     })
     Interview selectByPrimaryKey(Integer id);
 
@@ -72,67 +74,70 @@ public interface InterviewMapper {
      * @mbg.generated Sat Jun 08 14:06:23 PDT 2024
      */
     @Select({
-        "select",
-        "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
-        "update_date",
-        "from interview"
+            "select",
+            "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
+            "update_date, report_directory",
+            "from interview"
     })
     @Results({
-        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER),
-        @Result(column="cv_id", property="cvId", jdbcType=JdbcType.INTEGER),
-        @Result(column="ai_score", property="aiScore", jdbcType=JdbcType.VARCHAR),
-        @Result(column="ai_result", property="aiResult", jdbcType=JdbcType.VARCHAR),
-        @Result(column="report", property="report", jdbcType=JdbcType.VARCHAR),
-        @Result(column="company_name", property="companyName", jdbcType=JdbcType.VARCHAR),
-        @Result(column="position", property="position", jdbcType=JdbcType.VARCHAR),
-        @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "cv_id", property = "cvId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "ai_score", property = "aiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ai_result", property = "aiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report", property = "report", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "company_name", property = "companyName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "position", property = "position", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report_directory", property = "reportDirectory", jdbcType = JdbcType.VARCHAR)
     })
     List<Interview> selectAll();
 
     @Select({
             "select",
             "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
-            "update_date",
+            "update_date, report_directory",
             "from interview",
             "where user_id = #{userId,jdbcType=INTEGER}"
 
     })
     @Results({
-            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-            @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER),
-            @Result(column="cv_id", property="cvId", jdbcType=JdbcType.INTEGER),
-            @Result(column="ai_score", property="aiScore", jdbcType=JdbcType.VARCHAR),
-            @Result(column="ai_result", property="aiResult", jdbcType=JdbcType.VARCHAR),
-            @Result(column="report", property="report", jdbcType=JdbcType.VARCHAR),
-            @Result(column="company_name", property="companyName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="position", property="position", jdbcType=JdbcType.VARCHAR),
-            @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-            @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "cv_id", property = "cvId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "ai_score", property = "aiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ai_result", property = "aiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report", property = "report", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "company_name", property = "companyName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "position", property = "position", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report_directory", property = "reportDirectory", jdbcType = JdbcType.VARCHAR)
     })
     List<Interview> selectInterviewByUserId(Integer userId);
 
     @Select({
             "select",
             "id, user_id, cv_id, ai_score, ai_result, report, company_name, position, create_date, ",
-            "update_date ",
+            "update_date, report_directory ",
             "from interview ",
             "where user_id = #{userId,jdbcType=INTEGER}",
             "LIMIT #{offset}, #{pageSize}"
 
     })
     @Results({
-            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-            @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER),
-            @Result(column="cv_id", property="cvId", jdbcType=JdbcType.INTEGER),
-            @Result(column="ai_score", property="aiScore", jdbcType=JdbcType.VARCHAR),
-            @Result(column="ai_result", property="aiResult", jdbcType=JdbcType.VARCHAR),
-            @Result(column="report", property="report", jdbcType=JdbcType.VARCHAR),
-            @Result(column="company_name", property="companyName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="position", property="position", jdbcType=JdbcType.VARCHAR),
-            @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-            @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "cv_id", property = "cvId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "ai_score", property = "aiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ai_result", property = "aiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report", property = "report", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "company_name", property = "companyName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "position", property = "position", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "report_directory", property = "reportDirectory", jdbcType = JdbcType.VARCHAR)
     })
     List<Interview> selectInterviewByUserIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer userId);
 
@@ -152,15 +157,16 @@ public interface InterviewMapper {
      * @mbg.generated Sat Jun 08 14:06:23 PDT 2024
      */
     @Update({
-        "update interview",
-        "set user_id = #{userId,jdbcType=INTEGER},",
-          "cv_id = #{cvId,jdbcType=INTEGER},",
-          "ai_score = #{aiScore,jdbcType=VARCHAR},",
-          "ai_result = #{aiResult,jdbcType=VARCHAR},",
-          "report = #{report,jdbcType=VARCHAR},",
-          "company_name = #{companyName,jdbcType=VARCHAR},",
-          "position = #{position,jdbcType=VARCHAR}",
-        "where id = #{id,jdbcType=INTEGER}"
+            "update interview",
+            "set user_id = #{userId,jdbcType=INTEGER},",
+            "cv_id = #{cvId,jdbcType=INTEGER},",
+            "ai_score = #{aiScore,jdbcType=VARCHAR},",
+            "ai_result = #{aiResult,jdbcType=VARCHAR},",
+            "report = #{report,jdbcType=VARCHAR},",
+            "company_name = #{companyName,jdbcType=VARCHAR},",
+            "position = #{position,jdbcType=VARCHAR},",
+            "report_directory = #{reportDirectory,jdbcType=VARCHAR} ",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Interview record);
 }

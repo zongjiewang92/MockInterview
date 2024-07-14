@@ -2,6 +2,7 @@ package com.fdu.mockinterview.mapper;
 
 import com.fdu.mockinterview.entity.Interview;
 import com.fdu.mockinterview.entity.Question;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.*;
@@ -15,8 +16,8 @@ public interface QuestionMapper {
      * @mbg.generated Sat Jun 08 14:06:10 PDT 2024
      */
     @Delete({
-        "delete from question",
-        "where id = #{id,jdbcType=INTEGER}"
+            "delete from question",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     int deleteByPrimaryKey(Integer id);
 
@@ -27,16 +28,16 @@ public interface QuestionMapper {
      * @mbg.generated Sat Jun 08 14:06:10 PDT 2024
      */
     @Insert({
-        "insert into question ( interview_id, ",
-        "number, description, ",
-        "answer_name, answer_directory, ",
-        "answer_context, question_ai_score, ",
-        "question_ai_result) ",
-        "values ( #{interviewId,jdbcType=INTEGER}, ",
-        "#{number,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, ",
-        "#{answerName,jdbcType=VARCHAR}, #{answerDirectory,jdbcType=VARCHAR}, ",
-        "#{answerContext,jdbcType=VARCHAR}, #{questionAiScore,jdbcType=VARCHAR}, ",
-        "#{questionAiResult,jdbcType=VARCHAR}) "
+            "insert into question ( interview_id, ",
+            "number, description, ",
+            "answer_name, answer_directory, ",
+            "answer_context, question_ai_score, ",
+            "question_ai_result, question_directory) ",
+            "values ( #{interviewId,jdbcType=INTEGER}, ",
+            "#{number,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, ",
+            "#{answerName,jdbcType=VARCHAR}, #{answerDirectory,jdbcType=VARCHAR}, ",
+            "#{answerContext,jdbcType=VARCHAR}, #{questionAiScore,jdbcType=VARCHAR}, ",
+            "#{questionAiResult,jdbcType=VARCHAR}, #{questionDirectory,jdbcType=VARCHAR} ) "
     })
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Question record);
@@ -48,24 +49,25 @@ public interface QuestionMapper {
      * @mbg.generated Sat Jun 08 14:06:10 PDT 2024
      */
     @Select({
-        "select",
-        "id, interview_id, number, description, answer_name, answer_directory, answer_context, ",
-        "question_ai_score, question_ai_result, create_date, update_date",
-        "from question",
-        "where id = #{id,jdbcType=INTEGER}"
+            "select",
+            "id, interview_id, number, description, answer_name, answer_directory, answer_context, ",
+            "question_ai_score, question_ai_result, create_date, update_date, question_directory",
+            "from question",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
-        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="interview_id", property="interviewId", jdbcType=JdbcType.INTEGER),
-        @Result(column="number", property="number", jdbcType=JdbcType.INTEGER),
-        @Result(column="description", property="description", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_name", property="answerName", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_directory", property="answerDirectory", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_context", property="answerContext", jdbcType=JdbcType.VARCHAR),
-        @Result(column="question_ai_score", property="questionAiScore", jdbcType=JdbcType.VARCHAR),
-        @Result(column="question_ai_result", property="questionAiResult", jdbcType=JdbcType.VARCHAR),
-        @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "interview_id", property = "interviewId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "number", property = "number", jdbcType = JdbcType.INTEGER),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_name", property = "answerName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_directory", property = "answerDirectory", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_context", property = "answerContext", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_score", property = "questionAiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_result", property = "questionAiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_directory", property = "questionDirectory", jdbcType = JdbcType.VARCHAR)
     })
     Question selectByPrimaryKey(Integer id);
 
@@ -76,23 +78,24 @@ public interface QuestionMapper {
      * @mbg.generated Sat Jun 08 14:06:10 PDT 2024
      */
     @Select({
-        "select",
-        "id, interview_id, number, description, answer_name, answer_directory, answer_context, ",
-        "question_ai_score, question_ai_result, create_date, update_date",
-        "from question"
+            "select",
+            "id, interview_id, number, description, answer_name, answer_directory, answer_context, ",
+            "question_ai_score, question_ai_result, create_date, update_date, question_directory",
+            "from question"
     })
     @Results({
-        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="interview_id", property="interviewId", jdbcType=JdbcType.INTEGER),
-        @Result(column="number", property="number", jdbcType=JdbcType.INTEGER),
-        @Result(column="description", property="description", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_name", property="answerName", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_directory", property="answerDirectory", jdbcType=JdbcType.VARCHAR),
-        @Result(column="answer_context", property="answerContext", jdbcType=JdbcType.VARCHAR),
-        @Result(column="question_ai_score", property="questionAiScore", jdbcType=JdbcType.VARCHAR),
-        @Result(column="question_ai_result", property="questionAiResult", jdbcType=JdbcType.VARCHAR),
-        @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "interview_id", property = "interviewId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "number", property = "number", jdbcType = JdbcType.INTEGER),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_name", property = "answerName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_directory", property = "answerDirectory", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_context", property = "answerContext", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_score", property = "questionAiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_result", property = "questionAiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_directory", property = "questionDirectory", jdbcType = JdbcType.VARCHAR)
     })
     List<Question> selectAll();
 
@@ -100,23 +103,24 @@ public interface QuestionMapper {
     @Select({
             "select",
             "id, interview_id, number, description, answer_name, answer_directory, answer_context, ",
-            "question_ai_score, question_ai_result, create_date, update_date",
+            "question_ai_score, question_ai_result, create_date, update_date, question_directory ",
             "from question",
             "where interview_id = #{interviewId,jdbcType=INTEGER}",
             "LIMIT #{offset}, #{pageSize}"
     })
     @Results({
-            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-            @Result(column="interview_id", property="interviewId", jdbcType=JdbcType.INTEGER),
-            @Result(column="number", property="number", jdbcType=JdbcType.INTEGER),
-            @Result(column="description", property="description", jdbcType=JdbcType.VARCHAR),
-            @Result(column="answer_name", property="answerName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="answer_directory", property="answerDirectory", jdbcType=JdbcType.VARCHAR),
-            @Result(column="answer_context", property="answerContext", jdbcType=JdbcType.VARCHAR),
-            @Result(column="question_ai_score", property="questionAiScore", jdbcType=JdbcType.VARCHAR),
-            @Result(column="question_ai_result", property="questionAiResult", jdbcType=JdbcType.VARCHAR),
-            @Result(column="create_date", property="createDate", jdbcType=JdbcType.VARCHAR),
-            @Result(column="update_date", property="updateDate", jdbcType=JdbcType.VARCHAR)
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "interview_id", property = "interviewId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "number", property = "number", jdbcType = JdbcType.INTEGER),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_name", property = "answerName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_directory", property = "answerDirectory", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "answer_context", property = "answerContext", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_score", property = "questionAiScore", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_ai_result", property = "questionAiResult", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_date", property = "createDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_date", property = "updateDate", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "question_directory", property = "questionDirectory", jdbcType = JdbcType.VARCHAR)
     })
     List<Question> selectQuestionByInterviewIdPages(@Param("offset") int offset, @Param("pageSize") int pageSize, Integer interviewId);
 
@@ -136,18 +140,24 @@ public interface QuestionMapper {
      * @mbg.generated Sat Jun 08 14:06:10 PDT 2024
      */
     @Update({
-        "update question",
-        "set interview_id = #{interviewId,jdbcType=INTEGER},",
-          "number = #{number,jdbcType=INTEGER},",
-          "description = #{description,jdbcType=VARCHAR},",
-          "answer_name = #{answerName,jdbcType=VARCHAR},",
-          "answer_directory = #{answerDirectory,jdbcType=VARCHAR},",
-          "answer_context = #{answerContext,jdbcType=VARCHAR},",
-          "question_ai_score = #{questionAiScore,jdbcType=VARCHAR},",
-          "question_ai_result = #{questionAiResult,jdbcType=VARCHAR}",
-        "where id = #{id,jdbcType=INTEGER}"
+            "update question",
+            "set interview_id = #{interviewId,jdbcType=INTEGER},",
+            "number = #{number,jdbcType=INTEGER},",
+            "description = #{description,jdbcType=VARCHAR},",
+            "answer_name = #{answerName,jdbcType=VARCHAR},",
+            "answer_directory = #{answerDirectory,jdbcType=VARCHAR},",
+            "answer_context = #{answerContext,jdbcType=VARCHAR},",
+            "question_ai_score = #{questionAiScore,jdbcType=VARCHAR},",
+            "question_ai_result = #{questionAiResult,jdbcType=VARCHAR},",
+            "question_directory = #{questionDirectory,jdbcType=VARCHAR} ",
+            "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Question record);
 
 
+    @Delete({
+            "delete from question",
+            "where interview_id = #{interviewId,jdbcType=INTEGER}"
+    })
+    void deleteByInterviewId(Integer interviewId);
 }

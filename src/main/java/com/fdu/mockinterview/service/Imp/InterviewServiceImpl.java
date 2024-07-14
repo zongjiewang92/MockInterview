@@ -3,6 +3,7 @@ package com.fdu.mockinterview.service.Imp;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fdu.mockinterview.common.Constant;
 import com.fdu.mockinterview.common.PageResult;
 import com.fdu.mockinterview.common.ResultBuilder;
 import com.fdu.mockinterview.entity.Interview;
@@ -22,10 +23,13 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service("interviewService")
@@ -98,13 +102,24 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public ResponseEntity<List<Question>> startInterview(Interview interview) {
+    public ResponseEntity<List<Question>> startInterview(Interview interviewInput) {
+
+        questionService.deleteQuestionsByInterviewId(interviewInput.getId());
+
+        Interview interview = interviewMapper.selectByPrimaryKey(interviewInput.getId());
+
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put("company", interview.getCompanyName());
         jsonObject.put("position", interview.getPosition());
+
         Resume resume = resumeService.getResumeById(interview.getCvId());
         String cvContext = resume.getCvContext();
+
+        String  interviewId = interview.getId().toString();
+        jsonObject.put(Constant.INTERVIEW_ID, interviewId);
+        Constant.sessionMap.put(interviewId, interviewId);
+
         try {
             JsonNode jsonNode = objectMapper.readTree(cvContext);
             jsonObject.put("resume_text", jsonNode.get("resume_text").asText());
@@ -117,35 +132,73 @@ public class InterviewServiceImpl implements InterviewService {
                     .body(null);
         }
 
-        String initMsg = webClientService.getWebClient().post()
+        String firstQuestionPath = webClientService.getWebClient().post()
                 .uri("/initialize")
                 .bodyValue(jsonObject)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> {
-                    // 打印返回码
+                    // print response code
                     System.err.println("Error response code: " + response.statusCode());
                     return Mono.error(new RuntimeException("HTTP " + response.statusCode()));
                 })
                 .bodyToMono(String.class)
                 .block();
 
-        List<String> questions = webClientService.getWebClient().get()
-                .uri("/getAllQuestions")
-                .retrieve()
-                .bodyToFlux(String.class)
-                .collectList().block();
+        assert firstQuestionPath != null;
+        firstQuestionPath = firstQuestionPath.substring(1, firstQuestionPath.lastIndexOf("\""));
+        Path path = Paths.get(firstQuestionPath);
+        Path normalizedPath = path.normalize();
+        String normalizedString = normalizedPath.toString();
 
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = dateTime.format(formatter);
+
+        List<String> questions = webClientService.getWebClient().post()
+                .uri("/getAllQuestions")
+                .bodyValue(jsonObject)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response -> {
+                    // print response code
+                    System.err.println("Error response code: " + response.statusCode());
+                    return Mono.error(new RuntimeException("HTTP " + response.statusCode()));
+                })
+                .bodyToFlux(String.class)
+                .collectList()
+                .block();
+
+
+
+        if (questions==null || questions.isEmpty()){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
         List<Question> questionList = new ArrayList<>();
-        for (String question : questions) {
-            Question question1 = new Question();
-            question1.setInterviewId(interview.getId());
-            question1.setCreateDate(formattedDateTime);
-            question1.setDescription(question);
-            questionService.createQuestion(question1);
-            questionList.add(question1);
+        int number = 1;
+        for (String desc : questions) {
+
+            if (desc.equalsIgnoreCase("[") || desc.equalsIgnoreCase("]")){
+                continue;
+            }else {
+                desc = desc.trim();
+                if (desc.startsWith("\"")){
+                    desc = desc.substring(1);
+                }
+                if (desc.endsWith(",")){
+                    desc = desc.substring(0, desc.lastIndexOf(","));
+                }
+                if (desc.endsWith("\"")){
+                    desc = desc.substring(0, desc.lastIndexOf("\""));
+                }
+            }
+
+            Question question = new Question();
+            question.setInterviewId(interview.getId());
+            question.setNumber(number);
+            if (number==1){
+                question.setQuestionDirectory(normalizedString);
+            }
+            question.setDescription(desc);
+            questionService.createQuestion(question);
+            questionList.add(question);
+            number++;
         }
 
         return ResponseEntity.ok(questionList);
