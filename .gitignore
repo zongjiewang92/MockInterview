@@ -36,7 +36,7 @@ build/
 
 src/main/java/com/fdu/mockinterview/service/.DS_Store!/AiMockInterview/src/flask_session/
 src/main/java/com/fdu/mockinterview/service/.DS_Store!/AiMockInterview/src/__pycache__/
-AiMockInterview/src/constant.py
+
 
 AiMockInterview/src/__pycache__/
 AiMockInterview/src/flask_session/
