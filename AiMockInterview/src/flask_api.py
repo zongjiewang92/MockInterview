@@ -31,12 +31,13 @@ def parse_resume_file():
 @app.route('/initialize', methods=['POST'])
 def initialize():
     data = request.get_json()
+    interview_id = data['interview_id']
     company = data['company']
     position = data['position']
     resume_text = data['resume_text']
     extracted_info = data['extracted_info']
     session_key = str(data[INTERVIEW_ID])
-    interviewSM = dialog_manager.InterviewerStateMachine(company, position, resume_text, extracted_info)
+    interviewSM = dialog_manager.InterviewerStateMachine(interview_id, company, position, resume_text, extracted_info)
     interviewSMMap[session_key] = interviewSM
 
     return jsonify({"message": "State Machine Initialized"}), 200

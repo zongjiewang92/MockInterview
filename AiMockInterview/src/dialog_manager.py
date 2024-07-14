@@ -8,9 +8,10 @@ import os
 
 class InterviewerStateMachine:
     # Constructor : __init__
-    def __init__(self, company, position, resume_text, extracted_info):
+    def __init__(self, interview_id, company, position, resume_text, extracted_info):
         # set attribute
         self.state = 'INIT'
+        self.interview_id = interview_id
         self.company = company
         self.position = position
         self.resume_text = resume_text
@@ -61,19 +62,7 @@ class InterviewerStateMachine:
         question = self.questions[self.current_question_index]
         response_text = question
 
-        file_path = f"../output/R{self.current_question_index}_response.mp3"
-
-        directory = os.path.dirname(file_path)
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        if not os.path.exists(file_path):
-            with open(file_path, 'wb') as f:
-                pass
-            print(f"File created: {file_path}")
-        else:
-            print(f"File already exists: {file_path}")
+        file_path = self.check_path()
 
         return utils.call_tts_api(response_text, file_path)
 
@@ -97,9 +86,26 @@ class InterviewerStateMachine:
         chain = LLMChain(prompt=prompt_template_evaluation, llm=self.llm)
         self.evaluation_result = chain.run({"info": self.extracted_info, "answers": answers})
         # this file name should be whole interview evaluation result?
-        self.evaluation_result_audio = utils.call_tts_api(self.evaluation_result,
-                                                          f"../output/R{self.current_question_index}_response.mp3")
+
+        file_path = self.check_path()
+
+        self.evaluation_result_audio = utils.call_tts_api(self.evaluation_result, file_path)
+
         return self.evaluation_result_audio
+
+    def check_path(self):
+        file_path = f"../output/R{self.interview_id}/R{self.current_question_index}_response.mp3"
+        directory = os.path.dirname(file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        if not os.path.exists(file_path):
+            with open(file_path, 'wb') as f:
+                pass
+            print(f"File created: {file_path}")
+        else:
+            print(f"File already exists: {file_path}")
+        return file_path
 
 
 def service(interview_sm, candidate_input):

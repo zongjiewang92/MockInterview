@@ -6,6 +6,7 @@ import constant
 openai.api_key = constant.jyOpenAIKey
 
 # Define Variables
+interview_id = "1"
 company = "Tech Innovations Inc."
 position = "Machine Learning Engineer"
 file_path = "../data/resume1.pdf"
@@ -14,7 +15,7 @@ file_path = "../data/resume1.pdf"
 summary_info, resume_text, extracted_info = utils.parse_resume_file(file_path)
 
 # Initialize interview state machine
-interviewSM = dialog_manager.InterviewerStateMachine(company, position, resume_text, extracted_info)
+interviewSM = dialog_manager.InterviewerStateMachine(interview_id, company, position, resume_text, extracted_info)
 
 interviewSM = dialog_manager.service(interviewSM, candidate_input="")
 interviewSM = dialog_manager.service(interviewSM, candidate_input='../data/User_1_audio.m4a')
