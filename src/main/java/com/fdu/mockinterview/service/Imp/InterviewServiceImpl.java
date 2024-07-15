@@ -148,7 +148,7 @@ public class InterviewServiceImpl implements InterviewService {
         firstQuestionPath = firstQuestionPath.substring(1, firstQuestionPath.lastIndexOf("\""));
         Path path = Paths.get(firstQuestionPath);
         Path normalizedPath = path.normalize();
-        String normalizedString = normalizedPath.toString();
+        String normalizedString = normalizedPath.toString().substring(6);
 
 
         List<String> questions = webClientService.getWebClient().post()

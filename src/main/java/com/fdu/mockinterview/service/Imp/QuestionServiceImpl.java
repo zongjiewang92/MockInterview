@@ -190,7 +190,7 @@ public class QuestionServiceImpl implements QuestionService {
             String responseAudioPath = responseEntity.get(Constant.audio_response_path);
             Path path = Paths.get(responseAudioPath);
             Path normalizedPath = path.normalize();
-            String normalizedString = normalizedPath.toString();
+            String normalizedString = normalizedPath.toString().substring(6);
 
             if (nextQuestionId > 0) {
                 Question nextQuestion = questionMapper.selectByPrimaryKey(nextQuestionId);
