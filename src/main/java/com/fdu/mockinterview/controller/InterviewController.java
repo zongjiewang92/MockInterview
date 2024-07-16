@@ -73,6 +73,10 @@ public class InterviewController {
         return interviewService.startInterview(interview);
     }
 
-
+    @PostMapping("/startInterview2")
+    public ResponseEntity<List<Question>> startInterview2(@RequestBody Interview interview) {
+        Interview interview2 = interviewService.createInterview(interview.getUserId(), interview.getCvId(), interview.getCompanyName(), interview.getPosition());
+        return startInterview(interview2);
+    }
 
 }

@@ -13,7 +13,6 @@ import { Separator } from "@/components/ui/separator";
 const ResultModal = () => {
   const { isOpen, type, onClose, additionalData } = useModalStore();
   const open = isOpen && type === "showResults";
-  const router = useRouter();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -26,18 +25,38 @@ const ResultModal = () => {
         <Separator />
         <DialogDescription>
           <div className="flex items-center flex-col py-6 md:py-10 lg:py-12">
-            <h3 className="text-lg md:2xl text-primary font-semibold tracking-wide">
-              You scored: {`${additionalData?.score}/${additionalData?.limit}`}
-            </h3>
-            <Button
-              onClick={() => {
-                router.push("/");
-                onClose();
-              }}
-              className="mt-3 md:mt-5"
-            >
-              Play Again
-            </Button>
+            <div className="report-container">
+              <div>
+                <h3 className="text-lg md:2xl text-primary tracking-wide">
+                  Company:
+                </h3>
+                {additionalData?.companyName}
+              </div>
+              <div>
+                <h3 className="text-lg md:2xl text-primary tracking-wide">
+                  Position:
+                </h3>
+                {additionalData?.position}
+              </div>
+              <div>
+                <h3 className="text-lg md:2xl text-primary tracking-wide">
+                  Report:
+                </h3>
+                {additionalData?.report}
+              </div>
+              <div>
+                <h3 className="text-lg md:2xl text-primary tracking-wide">
+                  AI Score: 
+                </h3>
+                {additionalData?.aiScore}
+              </div>
+              <div>
+                <h3 className="text-lg md:2xl text-primary tracking-wide">
+                  Update Date:
+                </h3>
+                {additionalData?.updateDate}
+              </div>
+            </div>
           </div>
         </DialogDescription>
       </DialogContent>

@@ -82,6 +82,25 @@ public class ResumeController {
         return resumeService.uploadResumeFile(file, resumeId, fileType);
     }
 
+
+    @Operation(summary = "Upload a file")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "File uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    @PostMapping(value = "/uploadResume2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadFile2(@RequestPart(name = "file") MultipartFile file,
+                                             @RequestParam Integer userId) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload.");
+        }
+        Resume resume = new Resume();
+        resume.setCvName(file.getOriginalFilename());
+        resume.setUserId(userId);
+        resumeService.createResume(resume);
+        return resumeService.uploadResumeFile(file, resume.getId(), 0);
+    }
+
     @GetMapping("/download/{resumeId:.+}")
     @Operation(summary = "Download a file")
     public ResponseEntity<org.springframework.core.io.Resource> downloadFile(@PathVariable Integer resumeId) {

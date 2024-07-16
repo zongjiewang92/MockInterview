@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import QuitQuizModal from "./quit-quiz-modal";
 import ResultModal from "./result-modal";
+import TipModal from "./tip-modal";
 
 const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -17,6 +18,7 @@ const ModalProvider = () => {
     <>
       <QuitQuizModal />
       <ResultModal />
+      <TipModal />
     </>
   );
 };

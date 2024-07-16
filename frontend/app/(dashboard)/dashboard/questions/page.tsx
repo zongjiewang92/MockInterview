@@ -1,64 +1,104 @@
+"use client";
 import Questions from "@/components/questions";
-import { categoryOptions, difficultyOptions } from "@/constants/index";
-import { redirect } from "next/navigation";
+import { useSession } from 'next-auth/react';
+import React, { useState, useEffect } from 'react';
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator"; // Import the missing module from the correct file path
+
+type DataItem = {
+  number: number;
+  id: number;
+  interviewId: number;
+  questionDirectory: string;
+  description: string;
+};
 
 type Props = {
   searchParams: {
-    category: string;
-    difficulty: string;
-    limit: string;
+    cvId: string;
+    companyName: string;
+    position: string;
   };
 };
 
-async function getData(category: string, difficulty: string, limit: string) {
-  const res = await fetch(
-    `https://the-trivia-api.com/api/questions?categories=${category}&limit=${limit}&type=multiple&difficulty=${difficulty}`
-  );//questions?categories=science&limit=3&type=multiple&difficulty=medium
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
+function convertFilePathToUrl(filePath: string): string {
+  if (!filePath) return '';
+  const pathParts = filePath.replace('../uploads/', '').split('\\').join('/');
+  return process.env.AUDIO_URL + `${pathParts}`;
 }
 
-const QuestionsPage = async ({ searchParams }: Props) => {
-  const category = searchParams.category as string;
-  const difficulty = searchParams.difficulty;
-  const limit = searchParams.limit;
+const QuestionsPage = ({ searchParams }: Props) => {
+  const [data, setData] = useState<DataItem[]>([]);
+  const [count, setCount] = useState<number>(0);
+  const companyName = searchParams.companyName;
+  const cvId = searchParams.cvId;
+  const position = searchParams.position;
+  const { data: session } = useSession();
+  const userId = session?.user?.email!;
 
-  const validateCategory = (category: string) => {
-    const validCategories = categoryOptions.map((option) => option.value);
-    return validCategories.includes(category);
+  const fetchData = async () => {
+    try {
+      // const response = await fetch(`/sb/question/selectByInterviewIdPages?pageNum=1&pageSize=100&interviewId=${interviewId}`, {
+      //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session!.user?.image }
+      // });
+      // const result: WData = await response.json();
+
+      const response = await fetch('/sb/interview/startInterview2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName,
+          cvId,
+          userId,
+          position,
+        })
+      });
+      const result: DataItem[] = await response.json();
+      console.log(result);
+      for (let i = 0; i < result.length; i++) {
+        result[i].questionDirectory = convertFilePathToUrl(result[i].questionDirectory);
+      }
+      console.log(result);
+      setData(result);
+      setCount(result.length)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
-  const validateDifficulty = (difficulty: string) => {
-    const validDifficulties = difficultyOptions.map((option) => option.value);
-    return validDifficulties.includes(difficulty);
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const validateLimit = (limit: string) => {
-    const parsedLimit = parseInt(limit, 10);
-    return !isNaN(parsedLimit) && parsedLimit >= 5 && parsedLimit <= 50;
-  };
-
-  // if (
-  //   !validateCategory(category) ||
-  //   !validateDifficulty(difficulty) ||
-  //   !validateLimit(limit)
-  // ) {
-  //   return redirect("/");
-  // }
-
-  const response = await getData(category, difficulty, limit);
-
+  if (count > 0) {
+    return (
+      <Questions
+        questions={data}
+        count={count}
+      />
+    );
+  }
   return (
-    <Questions
-      questions={response}
-      limit={parseInt(limit, 10)}
-      category={category}
-    />
-  );
+    <div className="wrapper">
+      <div className="bg-white p-4 shadow-md w-full md:w-[80%] lg:w-[70%] max-w-5xl rounded-md">
+        <h1 className="heading">AI Mock Interview</h1>
+        <Separator className="mb-3" />
+        <Progress value={0} />
+        <div className="flex justify-between py-5 px-2 font-bold text-md">
+          <p>Question: {0}</p>
+          <p>Countdown: {0}</p>
+        </div>
+        <div className="flex flex-col min-h-[70vh] py-10 px-3 md:px-5 gap-4 w-full">
+    <h2 className="text-2xl text-center font-medium">
+    Loading...
+              </h2>
+        </div>
+      </div>
+    </div>
+  )
 };
 
 export default QuestionsPage;
