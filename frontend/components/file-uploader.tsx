@@ -1,7 +1,7 @@
 // src/FileUpload.tsx
-import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { signOut, useSession } from 'next-auth/react';
+import React, {useCallback, useState} from 'react';
+import {useDropzone} from 'react-dropzone';
+import {useSession} from 'next-auth/react';
 
 const FileUpload: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -19,8 +19,7 @@ const FileUpload: React.FC = () => {
       method: 'POST',
       body: formData,
     }).then(resp=>{
-      const result = resp.json();
-      console.log(result)
+      console.log(resp)
     });
     setFiles(acceptedFiles);
   }, []);
