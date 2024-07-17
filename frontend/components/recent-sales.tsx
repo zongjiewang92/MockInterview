@@ -116,7 +116,7 @@ export function RecentSales() {
               </div>
             )
             ) : (
-              <p>Loading...</p>
+              <p>You have not uploaded any reseme here</p>
             )}
           </div>
           <FileUpload className="border border-dashed border-gray-500">
