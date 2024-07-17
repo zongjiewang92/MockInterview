@@ -236,7 +236,23 @@ public class QuestionServiceImpl implements QuestionService {
                         interview.setAiScore(String.valueOf(roundedResult));
 
                     } else {
-                        System.out.println("Score not found in the text.");
+                        String regex2 = "Score:.*(\\d+ out of \\d+)";
+                        Pattern pattern2 = Pattern.compile(regex2);
+                        Matcher matcher2 = pattern2.matcher(report);
+                        if (matcher2.find()) {
+                            String scoreStr2 = matcher2.group(1);
+                            String[] parts2 = scoreStr2.split(" out of ");
+                            int numerator2 = Integer.parseInt(parts2[0]);
+                            int denominator2 = Integer.parseInt(parts2[1]);
+
+                            float result2 = (float) numerator2 / denominator2;
+
+                            float roundedResult2 = Math.round(result2 * 100.0) / 100.0f;
+                            interview.setAiScore(String.valueOf(roundedResult2));
+
+                        }else {
+                            System.out.println("Score not found in the text.");
+                        }
                     }
 
 
