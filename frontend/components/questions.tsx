@@ -36,9 +36,7 @@ const formatTime = (totalSeconds: number): string => {
 function convertFilePathToUrl(filePath: string): string {
   console.log(filePath);
   if (!filePath) return '';
-  const pathParts = filePath.replace('..', '').replace('uploads', '').split('\\').join('/');
-  
-  const url = process.env.AUDIO_URL + `${pathParts}`;
+  const url = `/sb/resource/getResourceUrl?resourcePath=${filePath}`;
   console.log(url);
   return url;
 }

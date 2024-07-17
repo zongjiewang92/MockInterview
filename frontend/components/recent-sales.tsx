@@ -47,16 +47,6 @@ export function RecentSales() {
     router.push(`/dashboard/start?cvId=${id}`)
   };
 
-  const download = async (id: number) => {
-    try {
-      const response = await fetch('/sb/resume/download/' + id.toString(), {
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session!.user?.image }
-      });
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
   const deleteData = async (id: number) => {
     try {
       const response = await fetch('/sb/resume/deleteResume/' + id.toString(), {
@@ -99,7 +89,7 @@ export function RecentSales() {
                       </Link>
                     </p>
                     <p className="text-sm text-muted-foreground overflow-hidden">
-                      {item.cvContext.substring(0, 50)}
+                      {item.cvContext?.substring(0, 50)}
                     </p>
                   </div>
                 </div>
@@ -119,8 +109,7 @@ export function RecentSales() {
               <p>You have not uploaded any reseme here</p>
             )}
           </div>
-          <FileUpload className="border border-dashed border-gray-500">
-          </FileUpload>
+            <FileUpload refresh={fetchData} />
         </CardContent>
       </Card>
     </div>

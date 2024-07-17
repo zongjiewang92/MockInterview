@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fdu.mockinterview.common.ResultBuilder;
+
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,8 +18,9 @@ import java.util.Map;
 @RequestMapping("/resource")
 public class ResourceController {
 
-    @PostMapping("/getResourceUrl")
+    @GetMapping("/getResourceUrl")
     public ResponseEntity<Resource> getResourceUrl(@RequestParam String resourcePath) {
+        System.out.println("getResourceUrl called with resourcePath: " + resourcePath);
 
         if (resourcePath == null || resourcePath.isEmpty()) {
             return ResponseEntity.badRequest().body(null);

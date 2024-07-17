@@ -1,12 +1,15 @@
 // src/FileUpload.tsx
-import React, {useCallback, useState} from 'react';
-import {useDropzone} from 'react-dropzone';
-import {useSession} from 'next-auth/react';
+import React, { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { useSession } from 'next-auth/react';
 
-const FileUpload: React.FC = () => {
+interface FileUploadProps {
+  refresh: () => void;
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({ refresh }) => {
   const [files, setFiles] = useState<File[]>([]);
   const { data: session } = useSession();
-  console.log(session)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // upload to server
@@ -18,11 +21,12 @@ const FileUpload: React.FC = () => {
     fetch('/sb/resume/uploadResume2', {
       method: 'POST',
       body: formData,
-    }).then(resp=>{
-      console.log(resp)
+    }).then(resp => {
+      console.log(resp);
+      refresh();
     });
     setFiles(acceptedFiles);
-  }, []);
+  }, [refresh, session]);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
