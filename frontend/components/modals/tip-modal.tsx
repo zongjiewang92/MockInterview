@@ -22,7 +22,7 @@ const TipModal = () => {
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Warnning</AlertDialogTitle>
+          <AlertDialogTitle>Confirmation</AlertDialogTitle>
           <AlertDialogDescription>
             {additionalData}
           </AlertDialogDescription>

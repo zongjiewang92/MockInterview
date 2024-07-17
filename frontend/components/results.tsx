@@ -98,7 +98,7 @@ export function Results() {
                     </p>
                   </div>
                 </div>
-                <div className="">{item.aiScore}</div>
+                <div className="">{item.updateDate}</div>
 
 
                 <div className="flex font-normal">
@@ -112,7 +112,7 @@ export function Results() {
               </div>
             )
             ) : (
-              <p>Loading...</p>
+              <p>You have not take any interview yet</p>
             )}
           </div>
         </CardContent>

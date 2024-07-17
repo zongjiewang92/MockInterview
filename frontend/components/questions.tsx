@@ -172,20 +172,19 @@ const Questions = ({ questions, count }: Props) => {
           {1 > 0 && (
             <>
               <h2 className="text-2xl text-center font-medium">
-                Please
                 {
                   isPlaying == 0 && (
-                    <span> start to the question </span>
+                    <span>Please start to the question </span>
                   )
                 }
                 {
                   isPlaying == 1 && (
-                    <span> listen to the audio </span>
+                    <span>Please listen to the audio </span>
                   )
                 }
                 {
                   isPlaying == 3 && (
-                    <span>  record your answer </span>
+                    <span>Please record your answer </span>
                   )
                 }.
               </h2>
