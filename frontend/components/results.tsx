@@ -98,7 +98,7 @@ export function Results() {
                     </p>
                   </div>
                 </div>
-                <div className="">{item.updateDate}</div>
+                <div className="">{item.updateDate?.substring(0,10)}</div>
 
 
                 <div className="flex font-normal">

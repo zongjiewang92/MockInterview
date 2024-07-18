@@ -9,5 +9,6 @@ module.exports = {
     },
     env: {
       AUDIO_URL: process.env.AUDIO_URL,
-    }
+    },
+    reactStrictMode: false
   }

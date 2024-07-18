@@ -93,7 +93,7 @@ export function RecentSales() {
                     </p>
                   </div>
                 </div>
-                <div className="">{item.updateDate}</div>
+                <div className="">{item.updateDate?.substring(0,10)}</div>
 
                 <div className="flex font-normal">
                   <div className="ml-4 space-y-1 flex hover:cursor-pointer" onClick={() => start(item.id)} >
